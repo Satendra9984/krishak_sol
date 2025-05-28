@@ -1,16 +1,95 @@
-# bhoomi_sakti
+# 📄 Bhoomi Shakti Application
 
-A new Flutter project.
+**Submitted by:** Omnistacks Technologies  
+**Prepared for:** Mr. Srinivasa V. Reddy  
+**Date:** 22-05-2025
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🔍 Project Overview
 
-A few resources to get you started if this is your first Flutter project:
+**Bhoomi Shakti** is an agriculture-focused digital solution designed to empower farmers with actionable soil insights and streamline agri-service delivery workflows through a seamless and accessible mobile-first approach.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+The application consists of three integrated modules — **Farmer**, **Agent**, and **Admin** — focusing on soil testing, crop advisory, product ordering, and stakeholder management.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> Our goal is to digitize the farm-to-lab-to-market process while offering intuitive user experience and real-time insights to boost productivity and sustainability for Indian farmers.
+
+---
+
+## 🧩 Module Breakdown
+
+### 📱 1. Farmer Module (Flutter App)
+
+Farmers can:
+
+- Register/login via mobile OTP (JWT-based authentication)
+- Request a soil test by sharing farm details
+- View all their soil reports and detailed crop advisory
+- Access personalized recommendations:
+  - Recommended crops
+  - Fertilizers, pesticides, and seeds
+  - Soil preparation steps
+  - Services offered (can be ordered)
+- Browse products and services
+- Place orders and make payments (UPI / Netbanking / Cards)
+
+---
+
+### 👨‍🌾 2. Agent Module (Flutter App – Role-based Access)
+
+Agents will:
+
+- Login via mobile OTP (JWT-based)
+- Visit farms and perform soil testing
+- Enter soil data parameters directly in the app:
+  - `phLevel`, `electricalConductivity`, `organicCarbon`, `nitrogen`, `phosphorus`,  
+    `potassium`, `sulphur`, `zinc`, `boron`, `iron`, `manganese`, `copper`,  
+    `temperature`, `humidity`, `windSpeed`, `precipitation`
+- Generate crop advisory using our expert-curated agronomy dataset
+- Manage:
+  - Orders
+  - Product inventory (Add/Edit/Delete)
+  - Earnings and payment status
+  - Assigned soil tests and their completion status
+
+---
+
+### 🖥️ 3. Admin Module (React Dashboard)
+
+Admins (email + password authentication) can:
+
+- Manage all users: Farmers, Agents
+- Manage the Agronomy Table for crop advisory generation
+- Add/Edit/Delete:
+  - Products
+  - Crops
+  - Services
+- Monitor and manage:
+  - All soil tests
+  - Orders
+  - Payments (for agents and service providers)
+  - Reports across the system
+
+---
+
+## 🧪 Soil Test Inputs
+
+Agents will input the following scientific values:
+
+```java
+private Float phLevel;
+private Float electricalConductivity;
+private Float organicCarbon;
+private Float nitrogen;
+private Float phosphorus;
+private Float potassium;
+private Float sulphur;
+private Float zinc;
+private Float boron;
+private Float iron;
+private Float manganese;
+private Float copper;
+private Float temperature;
+private Float humidity;
+private Float windSpeed;
+private Float precipitation;
