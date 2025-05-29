@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Bhoomi Sakti (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "debug",
+      "program": "lib/main_dev.dart"
+    },
+    {
+      "name": "Bhoomi Sakti (Prod)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "release",
+      "program": "lib/main_prod.dart"
+    },
+    {
+      "name": "Bhoomi Sakti (Profile)",
+      "request": "launch",
+      "type": "dart",
+      "flutterMode": "profile",
+      "program": "lib/main_prod.dart"
+    }
+  ]
+}
