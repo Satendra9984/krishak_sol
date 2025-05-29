@@ -5,26 +5,22 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:bhoomi_sakti/main.dart';
+import 'package:bhoomi_sakti/main.dart'; // Imports PlaceholderApp
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('PlaceholderApp shows default message', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(const PlaceholderApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the placeholder text is shown.
+    expect(find.text('Bhoomi Shakti - Default Entry Point'), findsOneWidget);
+    expect(
+        find.text(
+            'This is a placeholder app. Please run the app using a specific flavor entry point (e.g., lib/main_dev.dart or lib/main_prod.dart). ',
+            findRichText: true),
+        findsOneWidget);
   });
 }
+
