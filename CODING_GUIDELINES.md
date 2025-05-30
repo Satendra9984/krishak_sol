@@ -6,11 +6,11 @@ Welcome to the Bhoomi Shakti project! This document provides a comprehensive gui
 
 Clean Architecture is a software design philosophy that separates an application into distinct layers with specific responsibilities. The primary goal is to create a system that is:
 
--   **Independent of Frameworks:** The core business logic should not depend on specific frameworks (e.g., Flutter).
--   **Testable:** Each layer can be tested independently.
--   **Independent of UI:** The UI can change without affecting the underlying business rules.
--   **Independent of Database:** The choice of database or data storage can be changed without impacting business logic.
--   **Independent of External Agencies:** Business rules don't know anything about the outside world.
+- **Independent of Frameworks:** The core business logic should not depend on specific frameworks (e.g., Flutter).
+- **Testable:** Each layer can be tested independently.
+- **Independent of UI:** The UI can change without affecting the underlying business rules.
+- **Independent of Database:** The choice of database or data storage can be changed without impacting business logic.
+- **Independent of External Agencies:** Business rules don't know anything about the outside world.
 
 The key principle is the **Dependency Rule**: *Source code dependencies can only point inwards*. Nothing in an inner circle can know anything at all about something in an outer circle.
 
@@ -45,45 +45,45 @@ lib/
 └── main.dart
 ```
 
-### Layers Explained:
+### Layers Explained
 
-1.  **Domain Layer (`features/[feature_name]/domain/`)**
-    *   **Purpose:** Contains the enterprise-wide business logic. This layer is the core of the application and should be independent of any other layer.
-    *   **Components:**
-        *   `entities/`: Plain Dart objects representing the core business data structures. They have no dependencies on Flutter or any specific packages.
-        *   `repositories/`: Abstract classes (interfaces) defining the contract for data operations. These are implemented by the Data layer.
-        *   `usecases/`: Implement specific business rules or actions. They orchestrate calls to repositories and perform logic. Each use case should have a single responsibility.
-    *   **Dependencies:** Depends only on itself and Dart core libraries. *No Flutter dependencies here!* Uses `fpdart` for functional programming constructs like `Either` for error handling.
+1. **Domain Layer (`features/[feature_name]/domain/`)**
+    - **Purpose:** Contains the enterprise-wide business logic. This layer is the core of the application and should be independent of any other layer.
+    - **Components:**
+        - `entities/`: Plain Dart objects representing the core business data structures. They have no dependencies on Flutter or any specific packages.
+        - `repositories/`: Abstract classes (interfaces) defining the contract for data operations. These are implemented by the Data layer.
+        - `usecases/`: Implement specific business rules or actions. They orchestrate calls to repositories and perform logic. Each use case should have a single responsibility.
+    - **Dependencies:** Depends only on itself and Dart core libraries. *No Flutter dependencies here!* Uses `fpdart` for functional programming constructs like `Either` for error handling.
 
-2.  **Data Layer (`features/[feature_name]/data/`)**
-    *   **Purpose:** Implements the repository contracts defined in the Domain layer. It handles all data operations, whether from a remote API, local database, or device sensors.
-    *   **Components:**
-        *   `models/`: Data Transfer Objects (DTOs) that often extend or map to/from Domain Entities. These models are specific to the data source (e.g., JSON parsing annotations for API responses).
-        *   `datasources/`: Concrete implementations for fetching and storing data. This is where `dio` (for network) and `isar` (for local storage) are used.
-        *   `repositories/`: Concrete implementations of the `repositories` defined in the Domain layer. They adapt data from datasources to the format expected by the Domain layer.
-    *   **Dependencies:** Depends on the Domain layer (to implement its interfaces and use entities) and external packages like `dio`, `isar`, `connectivity_plus`.
+2. **Data Layer (`features/[feature_name]/data/`)**
+    - **Purpose:** Implements the repository contracts defined in the Domain layer. It handles all data operations, whether from a remote API, local database, or device sensors.
+    - **Components:**
+        - `models/`: Data Transfer Objects (DTOs) that often extend or map to/from Domain Entities. These models are specific to the data source (e.g., JSON parsing annotations for API responses).
+        - `datasources/`: Concrete implementations for fetching and storing data. This is where `dio` (for network) and `isar` (for local storage) are used.
+        - `repositories/`: Concrete implementations of the `repositories` defined in the Domain layer. They adapt data from datasources to the format expected by the Domain layer.
+    - **Dependencies:** Depends on the Domain layer (to implement its interfaces and use entities) and external packages like `dio`, `isar`, `connectivity_plus`.
 
-3.  **Presentation Layer (`features/[feature_name]/presentation/`)**
-    *   **Purpose:** Handles all UI and user interaction. It displays data to the user and captures user input.
-    *   **Components:**
-        *   `pages/` or `screens/`: The actual UI screens built with Flutter widgets.
-        *   `widgets/`: Reusable UI components specific to a feature or shared across features.
-        *   `bloc/` or `cubit/` or `provider/`: State management logic using `flutter_bloc` and `flutter_riverpod`. These connect the UI to the use cases in the Domain layer.
-    *   **Dependencies:** Depends on the Domain layer (to call use cases and display entities) and Flutter SDK, `flutter_bloc`, `flutter_riverpod`, `go_router`.
+3. **Presentation Layer (`features/[feature_name]/presentation/`)**
+    - **Purpose:** Handles all UI and user interaction. It displays data to the user and captures user input.
+    - **Components:**
+        - `pages/` or `screens/`: The actual UI screens built with Flutter widgets.
+        - `widgets/`: Reusable UI components specific to a feature or shared across features.
+        - `bloc/` or `cubit/` or `provider/`: State management logic using `flutter_bloc` and `flutter_riverpod`. These connect the UI to the use cases in the Domain layer.
+    - **Dependencies:** Depends on the Domain layer (to call use cases and display entities) and Flutter SDK, `flutter_bloc`, `flutter_riverpod`, `go_router`.
 
-### `app/` Directory:
+### `app/` Directory
 
-*   `config/`: Contains application-wide configurations like themes, flavor settings (`FlavorConfig`).
-*   `core/`: Shared utilities, constants, base classes for error handling (`Failure` objects), extensions, network info (`connectivity_plus`).
-*   `navigation/`: Configuration for `go_router`, defining routes and navigation logic.
+- `config/`: Contains application-wide configurations like themes, flavor settings (`FlavorConfig`).
+- `core/`: Shared utilities, constants, base classes for error handling (`Failure` objects), extensions, network info (`connectivity_plus`).
+- `navigation/`: Configuration for `go_router`, defining routes and navigation logic.
 
 ## 3. Guiding Principles
 
-*   **Dependency Rule:** Always ensure dependencies flow inwards (Presentation -> Domain <- Data). The Domain layer should not know about the Presentation or Data layers.
-*   **Separation of Concerns:** Each component and layer has a clear, distinct responsibility.
-*   **Single Responsibility Principle (SRP):** Each class or function should do one thing and do it well.
-*   **Testability:** Design components to be easily testable. Use dependency injection to mock dependencies.
-*   **Immutability:** Prefer immutable data structures, especially for entities and state objects.
+- **Dependency Rule:** Always ensure dependencies flow inwards (Presentation -> Domain <- Data). The Domain layer should not know about the Presentation or Data layers.
+- **Separation of Concerns:** Each component and layer has a clear, distinct responsibility.
+- **Single Responsibility Principle (SRP):** Each class or function should do one thing and do it well.
+- **Testability:** Design components to be easily testable. Use dependency injection to mock dependencies.
+- **Immutability:** Prefer immutable data structures, especially for entities and state objects.
 
 ## 4. How to Add a New Feature (Step-by-Step)
 
@@ -91,7 +91,8 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
 
 **Step 1: Define in the Domain Layer (`features/crop_recommendation/domain/`)**
 
-1.  **Entities:** Create Dart classes for core concepts like `Crop`, `RecommendationParams`.
+1. **Entities:** Create Dart classes for core concepts like `Crop`, `RecommendationParams`.
+
     ```dart
     // features/crop_recommendation/domain/entities/crop.dart
     class Crop {
@@ -102,7 +103,9 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
       Crop({required this.id, required this.name, required this.description});
     }
     ```
-2.  **Repository Interface:** Define what data operations are needed. For example, `CropRepository`.
+
+2. **Repository Interface:** Define what data operations are needed. For example, `CropRepository`.
+
     ```dart
     // features/crop_recommendation/domain/repositories/crop_repository.dart
     import 'package:fpdart/fpdart.dart';
@@ -115,7 +118,9 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
       Future<Either<Failure, Crop>> getCropDetails(String cropId);
     }
     ```
-3.  **Use Cases:** Create classes for each specific user action or business rule.
+
+3. **Use Cases:** Create classes for each specific user action or business rule.
+
     ```dart
     // features/crop_recommendation/domain/usecases/get_recommended_crops.dart
     import 'package:fpdart/fpdart.dart';
@@ -136,11 +141,13 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
       }
     }
     ```
+
     *(You might need a generic `UseCase` interface in `app/core/usecases/`)*
 
 **Step 2: Implement in the Data Layer (`features/crop_recommendation/data/`)**
 
-1.  **Models:** Create data models that match the API response or database structure. These might extend or map to/from domain entities.
+1. **Models:** Create data models that match the API response or database structure. These might extend or map to/from domain entities.
+
     ```dart
     // features/crop_recommendation/data/models/crop_model.dart
     import '../../domain/entities/crop.dart';
@@ -170,8 +177,10 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
       }
     }
     ```
-2.  **Data Sources:** Implement how to fetch/store data.
-    *   `RemoteDataSource`: Uses `dio` for API calls.
+
+2. **Data Sources:** Implement how to fetch/store data.
+    - `RemoteDataSource`: Uses `dio` for API calls.
+
         ```dart
         // features/crop_recommendation/data/datasources/remote/crop_remote_data_source.dart
         import 'package:dio/dio.dart';
@@ -211,8 +220,10 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
           }
         }
         ```
-    *   `LocalDataSource`: Uses `isar` for caching (optional).
-3.  **Repository Implementation:** Implement the `CropRepository` from the Domain layer.
+
+    - `LocalDataSource`: Uses `isar` for caching (optional).
+3. **Repository Implementation:** Implement the `CropRepository` from the Domain layer.
+
     ```dart
     // features/crop_recommendation/data/repositories/crop_repository_impl.dart
     import 'package:fpdart/fpdart.dart';
@@ -280,7 +291,8 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
 
 **Step 3: Implement in the Presentation Layer (`features/crop_recommendation/presentation/`)**
 
-1.  **State Management (BLoC/Cubit):** Create a BLoC or Cubit to manage the state of the crop recommendation feature.
+1. **State Management (BLoC/Cubit):** Create a BLoC or Cubit to manage the state of the crop recommendation feature.
+
     ```dart
     // features/crop_recommendation/presentation/bloc/crop_recommendation_state.dart
     part of 'crop_recommendation_bloc.dart';
@@ -348,8 +360,10 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
       }
     }
     ```
+
     *(You'll need a `mapFailureToMessage` utility in `app/core/error/failure_utils.dart`)*
-2.  **Pages/Screens:** Create Flutter widgets to display the UI.
+2. **Pages/Screens:** Create Flutter widgets to display the UI.
+
     ```dart
     // features/crop_recommendation/presentation/pages/crop_recommendation_page.dart
     import 'package:flutter/material.dart';
@@ -417,13 +431,15 @@ Let's say you need to add a new feature, for example, "Crop Recommendation".
       }
     }
     ```
-3.  **Widgets:** Create any reusable widgets specific to this feature.
+
+3. **Widgets:** Create any reusable widgets specific to this feature.
 
 **Step 4: Dependency Injection (using `flutter_riverpod` or `get_it`)**
 
 Set up your dependency injection. For Riverpod, you'd define providers. For GetIt (as shown in `service_locator.dart` example above), you'd register your BLoCs, UseCases, Repositories, and DataSources.
 
 Example using GetIt (`app/core/dependency_injection/service_locator.dart`):
+
 ```dart
 // app/core/dependency_injection/service_locator.dart
 import 'package:get_it/get_it.dart';
@@ -471,9 +487,11 @@ Future<void> init() async {
   // sl.registerLazySingleton<CropLocalDataSource>(() => CropLocalDataSourceImpl(isarInstance: sl())); // if you have one and Isar is registered
 }
 ```
+
 Call `await init()` in your `main.dart` before `runApp()`.
 
 If using Riverpod, you would define providers:
+
 ```dart
 // Example Riverpod providers (can be in a dedicated file or feature-specific files)
 final dioProvider = Provider<Dio>((ref) => Dio());
@@ -532,42 +550,42 @@ final router = GoRouter(
 
 **Step 6: Write Tests!**
 
-*   **Domain Layer:** Unit test use cases and entities.
-*   **Data Layer:** Unit test repositories (mocking data sources) and data sources (mocking Dio/Isar).
-*   **Presentation Layer:** Widget test pages and widgets. BLoC/Cubit tests.
+- **Domain Layer:** Unit test use cases and entities.
+- **Data Layer:** Unit test repositories (mocking data sources) and data sources (mocking Dio/Isar).
+- **Presentation Layer:** Widget test pages and widgets. BLoC/Cubit tests.
 
 ## 5. Coding Standards and Best Practices
 
-*   **Naming Conventions:**
-    *   Classes, Enums, Typedefs: `UpperCamelCase` (e.g., `MyClass`).
-    *   Methods, Functions, Variables: `lowerCamelCase` (e.g., `myVariable`).
-    *   Constants: `kLowerCamelCase` or `ALL_CAPS_WITH_UNDERSCORES` (e.g., `kDefaultPadding` or `DEFAULT_TIMEOUT`).
-    *   Files: `snake_case.dart` (e.g., `my_file.dart`).
-*   **Formatting:** Use `dart format` to ensure consistent code style.
-*   **Linting:** Adhere to lint rules defined in `analysis_options.yaml`. We use `flutter_lints` or a stricter set.
-*   **Error Handling:**
-    *   Use `Either<Failure, SuccessType>` from `fpdart` in Domain and Data layers to handle operations that can fail.
-    *   Define custom `Failure` classes (e.g., `ServerFailure`, `CacheFailure`, `NetworkFailure`) in `app/core/error/failure.dart`.
-    *   Define custom `Exception` classes (e.g., `ServerException`, `CacheException`) in `app/core/error/exceptions.dart` for the Data layer.
-    *   The Presentation layer (BLoC) will convert `Failure` objects into user-friendly messages.
-*   **State Management (`flutter_bloc`):**
-    *   Clearly define `Events`, `States`, and the `Bloc` logic.
-    *   Keep states immutable.
-    *   Use `Equatable` for states and events to prevent unnecessary rebuilds.
-*   **Dependency Injection (`flutter_riverpod` / `get_it`):**
-    *   Centralize DI setup.
-    *   Inject dependencies through constructors.
-*   **Network Calls (`dio`):**
-    *   Centralize Dio instance creation and configuration (interceptors for logging, auth tokens, error handling).
-    *   Handle different HTTP status codes appropriately.
-*   **Local Storage (`isar`):**
-    *   Define Isar schemas clearly.
-    *   Handle migrations carefully.
-*   **Functional Programming (`fpdart`):**
-    *   Use `Either` for error handling, `Option` for nullable values, `TaskEither` for async operations that can fail.
-*   **Comments:** Write clear and concise comments for complex logic or public APIs. Use `///` for documentation comments.
-*   **Avoid `dynamic`:** Use specific types whenever possible.
-*   **Constants:** Define constants in a shared file or feature-specific constant files.
+- **Naming Conventions:**
+- Classes, Enums, Typedefs: `UpperCamelCase` (e.g., `MyClass`).
+- Methods, Functions, Variables: `lowerCamelCase` (e.g., `myVariable`).
+- Constants: `kLowerCamelCase` or `ALL_CAPS_WITH_UNDERSCORES` (e.g., `kDefaultPadding` or `DEFAULT_TIMEOUT`).
+- Files: `snake_case.dart` (e.g., `my_file.dart`).
+- **Formatting:** Use `dart format` to ensure consistent code style.
+- **Linting:** Adhere to lint rules defined in `analysis_options.yaml`. We use `flutter_lints` or a stricter set.
+- **Error Handling:**
+- Use `Either<Failure, SuccessType>` from `fpdart` in Domain and Data layers to handle operations that can fail.
+- Define custom `Failure` classes (e.g., `ServerFailure`, `CacheFailure`, `NetworkFailure`) in `app/core/error/failure.dart`.
+- Define custom `Exception` classes (e.g., `ServerException`, `CacheException`) in `app/core/error/exceptions.dart` for the Data layer.
+- The Presentation layer (BLoC) will convert `Failure` objects into user-friendly messages.
+- **State Management (`flutter_bloc`):**
+- Clearly define `Events`, `States`, and the `Bloc` logic.
+- Keep states immutable.
+- Use `Equatable` for states and events to prevent unnecessary rebuilds.
+- **Dependency Injection (`flutter_riverpod` / `get_it`):**
+- Centralize DI setup.
+- Inject dependencies through constructors.
+- **Network Calls (`dio`):**
+- Centralize Dio instance creation and configuration (interceptors for logging, auth tokens, error handling).
+- Handle different HTTP status codes appropriately.
+- **Local Storage (`isar`):**
+- Define Isar schemas clearly.
+- Handle migrations carefully.
+- **Functional Programming (`fpdart`):**
+- Use `Either` for error handling, `Option` for nullable values, `TaskEither` for async operations that can fail.
+- **Comments:** Write clear and concise comments for complex logic or public APIs. Use `///` for documentation comments.
+- **Avoid `dynamic`:** Use specific types whenever possible.
+- **Constants:** Define constants in a shared file or feature-specific constant files.
 
 ## 6. Managing Multiple App Environments (Flavors)
 
@@ -577,12 +595,12 @@ This project utilizes Flutter's flavor mechanism (often referred to as environme
 
 Flavors allow you to build and run different versions of your app from the same codebase. Each flavor can have its own:
 
-*   **Application Name and ID:** e.g., "Bhoomi Sakti Dev" (com.example.bhoomisakti.dev) vs. "Bhoomi Sakti" (com.example.bhoomisakti).
-*   **API Endpoints:** Connecting to a development, staging, or production backend server.
-*   **Third-Party Service Keys:** Using sandbox or production keys for services like analytics, crash reporting, or payment gateways.
-*   **Feature Flags:** Enabling or disabling certain features based on the environment.
-*   **Logging Levels:** More verbose logging in development, less in production.
-*   **Icon and Splash Screen:** Potentially different branding for non-production builds.
+- **Application Name and ID:** e.g., "Bhoomi Sakti Dev" (com.example.bhoomisakti.dev) vs. "Bhoomi Sakti" (com.example.bhoomisakti).
+- **API Endpoints:** Connecting to a development, staging, or production backend server.
+- **Third-Party Service Keys:** Using sandbox or production keys for services like analytics, crash reporting, or payment gateways.
+- **Feature Flags:** Enabling or disabling certain features based on the environment.
+- **Logging Levels:** More verbose logging in development, less in production.
+- **Icon and Splash Screen:** Potentially different branding for non-production builds.
 
 ### Why Use Multiple Environments?
 
@@ -652,36 +670,36 @@ We have pre-configured launch settings in `.vscode/launch.json` for convenience:
 
 ## 7. Version Control (Git)
 
-* **Branching Strategy:** Use a feature branching strategy (e.g., Gitflow or GitHub Flow).
-  * `main` or `master`: Production-ready code.
-  * `develop`: Integration branch for features.
-  * `feature/[feature-name]`: For developing new features.
-  * `bugfix/[issue-id]`: For fixing bugs.
-  * `hotfix/[issue-id]`: For critical production fixes.
-*   **Commit Messages:** Write clear and descriptive commit messages (e.g., `feat: Add crop recommendation feature` or `fix: Correct login validation`). Consider using Conventional Commits.
-*   **Pull Requests (PRs):**
-    *   All code changes should go through PRs.
-    *   Ensure PRs are reviewed by at least one other team member.
-    *   Ensure tests pass before merging.
+- **Branching Strategy:** Use a feature branching strategy (e.g., Gitflow or GitHub Flow).
+  - `main` or `master`: Production-ready code.
+  - `develop`: Integration branch for features.
+  - `feature/[feature-name]`: For developing new features.
+  - `bugfix/[issue-id]`: For fixing bugs.
+  - `hotfix/[issue-id]`: For critical production fixes.
+- **Commit Messages:** Write clear and descriptive commit messages (e.g., `feat: Add crop recommendation feature` or `fix: Correct login validation`). Consider using Conventional Commits.
+- **Pull Requests (PRs):**
+- All code changes should go through PRs.
+- Ensure PRs are reviewed by at least one other team member.
+- Ensure tests pass before merging.
 
 ## 8. Testing
 
 Writing tests is crucial for maintaining code quality and stability.
 
-* **Unit Tests:**
-  * Test individual functions, methods, or classes.
-  * Focus on Domain layer (use cases, entities) and Data layer (repositories, data sources - with mocks).
-  * Use the `test` package.
-* **Widget Tests:**
-  * Test individual Flutter widgets in isolation.
-  * Verify UI rendering and interaction.
-  * Use the `flutter_test` package.
-* **BLoC/Cubit Tests:**
-  * Test state transitions and logic within BLoCs/Cubits.
-  * Use the `bloc_test` package.
-* **Integration Tests:**
-  * Test complete features or user flows, involving multiple layers.
-  * Use the `integration_test` package.
+- **Unit Tests:**
+  - Test individual functions, methods, or classes.
+  - Focus on Domain layer (use cases, entities) and Data layer (repositories, data sources - with mocks).
+  - Use the `test` package.
+- **Widget Tests:**
+  - Test individual Flutter widgets in isolation.
+  - Verify UI rendering and interaction.
+  - Use the `flutter_test` package.
+- **BLoC/Cubit Tests:**
+  - Test state transitions and logic within BLoCs/Cubits.
+  - Use the `bloc_test` package.
+- **Integration Tests:**
+  - Test complete features or user flows, involving multiple layers.
+  - Use the `integration_test` package.
 
 Place tests in a `test/` directory mirroring the `lib/` structure.
 

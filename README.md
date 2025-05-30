@@ -93,3 +93,15 @@ private Float temperature;
 private Float humidity;
 private Float windSpeed;
 private Float precipitation;
+
+
+
+
+Final Advice
+Start with SWE-1-lite for most of your Flutter work—it’s unlimited and tuned for real-world software engineering.
+
+Switch to SWE-1 for more complex or multi-step tasks while it remains free.
+
+Use Gemini 2.5 Pro or Claude 3.7 Sonnet for the toughest coding challenges, especially if you have credits to spare.
+
+This approach balances performance, access, and cost for Flutter development on Windsurf as a free user.

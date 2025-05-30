@@ -1,38 +1,31 @@
 import 'package:bhoomi_sakti/features/splash/presentation/pages/splash.dart';
-import 'package:flutter/material.dart';
+import 'package:bhoomi_sakti/features/dashboard/presentation/pages/dashboard_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'app_route_paths.dart';
 
 // Provider for GoRouter
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: AppRoutePaths.home,
     routes: [
+      // Splash Screen
       GoRoute(
-        path: '/',
-        builder:
-            (context, state) =>
-                const SplashScreen(), // Replace with your actual initial screen
-        // TODO: Add more routes for different features/modules
-        // Example:
-        // routes: [
-        //   GoRoute(
-        //     path: 'auth',
-        //     builder: (context, state) => const LoginPage(),
-        //   ),
-        // ],
+        path: AppRoutePaths.splash,
+        builder: (context, state) => const SplashScreen(),
       ),
-      // Example for a feature route (e.g., farmer module)
-      // GoRoute(
-      //   path: '/farmer',
-      //   builder: (context, state) => const FarmerDashboardScreen(),
-      //   routes: [
-      //     GoRoute(
-      //       path: 'soil-test-request',
-      //       builder: (context, state) => const SoilTestRequestScreen(),
-      //     ),
-      //   ]
-      // ),
+
+      // Auth Routes
+      // TODO: Add login, signup, etc. routes here
+
+      // Main App
+      GoRoute(
+        path: AppRoutePaths.home,
+        builder: (context, state) => const DashboardScreen(),
+        routes: [
+          // Add nested routes here if needed
+        ],
+      ),
     ],
     // TODO: Add error handling, redirection, etc.
     // errorBuilder: (context, state) => ErrorScreen(error: state.error),
@@ -45,11 +38,3 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     // },
   );
 });
-
-// TODO: Define your route paths here for better management
-// class AppRoutes {
-//   static const String splash = '/';
-//   static const String login = '/login';
-//   static const String farmerDashboard = '/farmer';
-//   static const String soilTestRequest = '/farmer/soil-test-request';
-// }
