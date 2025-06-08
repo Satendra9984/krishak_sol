@@ -15,10 +15,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required GetCurrentUserUsecase getCurrentUserUsecase,
     required TokenStorageService tokenStorageService,
     // required RefreshTokenUsecase refreshTokenUsecase,
-  })  : _getCurrentUserUsecase = getCurrentUserUsecase,
-        _tokenStorageService = tokenStorageService,
-        // _refreshTokenUsecase = refreshTokenUsecase,
-        super(const AuthInitial()) {
+  }) : _getCurrentUserUsecase = getCurrentUserUsecase,
+       _tokenStorageService = tokenStorageService,
+       // _refreshTokenUsecase = refreshTokenUsecase,
+       super(const AuthInitial()) {
     checkAuthStatus();
   }
 
@@ -32,7 +32,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         (failure) {
           // If fetching user fails (e.g. token expired, network issue), treat as unauthenticated
           // Could also be a specific AuthFailureState if we want to show an error
-          _tokenStorageService.clearTokens(); // Clear potentially invalid tokens
+          _tokenStorageService
+              .clearTokens(); // Clear potentially invalid tokens
           state = const Unauthenticated();
         },
         // Ensure tokens is not null here, as it was checked before calling _getCurrentUserUsecase
@@ -54,32 +55,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = const AuthLoading();
     await _tokenStorageService.clearTokens();
     state = const Unauthenticated();
-    // TODO: Potentially call an API endpoint to invalidate server-side session/token if available
   }
 
-  // Example of how a direct refresh might be initiated if needed, though primarily handled by interceptor
-  // Future<void> attemptTokenRefresh() async {
-  //   if (state is Authenticated || state is AuthFailureState) { // Only if there was a user or a failed attempt
-  //     final currentTokens = await _tokenStorageService.getTokens();
-  //     if (currentTokens?.refreshToken != null) {
-  //       final result = await _refreshTokenUsecase.call(RefreshTokenParams(refreshToken: currentTokens!.refreshToken));
-  //       result.fold(
-  //         (failure) async {
-  //           await loggedOut(); // If refresh fails, log out fully
-  //         },
-  //         (newTokens) async {
-  //           await _tokenStorageService.saveTokens(newTokens);
-  //           // Re-fetch user or update state as Authenticated if user data is still valid
-  //           final userResult = await _getCurrentUserUsecase.call(NoParams());
-  //           userResult.fold(
-  //             (f) => loggedOut(), 
-  //             (u) => state = Authenticated(user: u)
-  //           );
-  //         }
-  //       );
-  //     } else {
-  //       await loggedOut();
-  //     }
-  //   }
-  // }
+  /// Sets the authenticated user from splash (when tokens are already valid).
+  void setAuthenticatedUser(UserEntity user, TokensEntity tokens) {
+    state = Authenticated(user: user, tokens: tokens);
+  }
 }

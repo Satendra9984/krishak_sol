@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/onboarding_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/auth_providers.dart'; // For onboardingBlocProvider
+import 'package:bhoomi_sakti/features/onboarding/onboarding_providers.dart';
+import 'package:bhoomi_sakti/features/onboarding/presentation/blocs/onboarding_bloc/onboarding_bloc.dart';
 
-// --- Onboarding Item Data Structure (as defined earlier) ---
 class OnboardingItemData {
-  final String imagePath; // Placeholder, will use Icon for now
+  final String imagePath;
   final String title;
   final String subtitle;
-  final IconData iconData; // Using IconData as placeholder for imagePath
+  final IconData iconData;
 
   OnboardingItemData({
-    required this.imagePath, // Keep for future asset integration
+    required this.imagePath,
     required this.title,
     required this.subtitle,
     required this.iconData,
@@ -39,14 +38,13 @@ final List<OnboardingItemData> onboardingItemsList = [
     subtitle: 'Receive personalized guidance to boost your crop yield.',
   ),
 ];
-// --- End Onboarding Item Data Structure ---
 
 class OnboardingPage extends ConsumerWidget {
   const OnboardingPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final PageController pageController = PageController();
+    final pageController = PageController();
     final onboardingBloc = ref.watch(onboardingBlocProvider);
 
     return Scaffold(
@@ -54,10 +52,7 @@ class OnboardingPage extends ConsumerWidget {
         bloc: onboardingBloc,
         listener: (context, state) {
           if (state is OnboardingCompleted) {
-            // GoRouter's redirect logic will handle navigation based on shared_prefs
-            // This listener is more for reacting to the BLoC state if needed locally,
-            // but primary navigation is deferred to GoRouter.
-            // Example: context.go(AppRoutePaths.login);
+            // Navigation is handled by the router's redirect logic
           }
         },
         child: Stack(
@@ -101,7 +96,17 @@ class OnboardingPage extends ConsumerWidget {
                       Row(
                         children: List.generate(
                           onboardingItemsList.length,
-                          (index) => buildDot(index, context, currentPage),
+                          (index) => Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                            width: 8.0,
+                            height: 8.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: currentPage == index
+                                  ? Theme.of(context).primaryColor
+                                  : Colors.grey[300],
+                            ),
+                          ),
                         ),
                       ),
                       TextButton(
@@ -112,12 +117,14 @@ class OnboardingPage extends ConsumerWidget {
                               curve: Curves.easeIn,
                             );
                           } else {
-                            onboardingBloc.add(OnboardingFinish());
+                            onboardingBloc.add(OnboardingComplete());
                           }
                         },
-                        child: Text(currentPage < onboardingItemsList.length - 1
-                            ? 'NEXT'
-                            : 'FINISH'),
+                        child: Text(
+                          currentPage == onboardingItemsList.length - 1
+                              ? 'GET STARTED'
+                              : 'NEXT',
+                        ),
                       ),
                     ],
                   );
@@ -126,18 +133,6 @@ class OnboardingPage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget buildDot(int index, BuildContext context, int currentPage) {
-    return Container(
-      height: 10,
-      width: currentPage == index ? 25 : 10,
-      margin: const EdgeInsets.only(right: 5),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: Theme.of(context).primaryColor,
       ),
     );
   }
@@ -158,25 +153,28 @@ class OnboardingScreenItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(40.0),
+      padding: const EdgeInsets.all(24.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(iconData, size: 150, color: Theme.of(context).primaryColor),
-          const SizedBox(height: 30),
+          Icon(
+            iconData,
+            size: 120,
+            color: Theme.of(context).primaryColor,
+          ),
+          const SizedBox(height: 32.0),
           Text(
             title,
-            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 16.0),
           Text(
             subtitle,
-            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge,
+            textAlign: TextAlign.center,
           ),
         ],
       ),

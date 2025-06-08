@@ -8,8 +8,7 @@ import 'package:bhoomi_sakti/features/auth/data/models/refresh_token_request_mod
 import 'package:bhoomi_sakti/features/auth/data/models/auth_success_model.dart'; // Added import
 import 'auth_remote_data_source.dart';
 
-// TODO: Define base URL in a config file or through DI
-const String _baseUrl = 'YOUR_BASE_URL_HERE'; 
+const String _baseUrl = 'YOUR_BASE_URL_HERE';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final Dio dio;
@@ -23,13 +22,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         '$_baseUrl/auth/request-signup-otp', // Placeholder endpoint
         data: signupRequest.toJson(),
       );
-      if (response.statusCode != 200 && response.statusCode != 201 && response.statusCode != 204) {
-        throw ServerException(message: 'Requesting signup OTP failed', data: response.data);
+      if (response.statusCode != 200 &&
+          response.statusCode != 201 &&
+          response.statusCode != 204) {
+        throw ServerException(
+          message: 'Requesting signup OTP failed',
+          data: response.data,
+        );
       }
       // Success, no body expected
     } on DioException catch (e) {
       if (e.error is AppException) throw e.error as AppException;
-      throw ServerException(message: e.message ?? 'Network error during signup OTP request', data: e.response?.data);
+      throw ServerException(
+        message: e.message ?? 'Network error during signup OTP request',
+        data: e.response?.data,
+      );
     }
   }
 
@@ -38,20 +45,32 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final response = await dio.post(
         '$_baseUrl/auth/request-login-otp', // Placeholder endpoint
-        data: loginRequest.toJson(), // Assuming name field is optional/not present for login OTP
+        data:
+            loginRequest
+                .toJson(), // Assuming name field is optional/not present for login OTP
       );
-      if (response.statusCode != 200 && response.statusCode != 201 && response.statusCode != 204) {
-        throw ServerException(message: 'Requesting login OTP failed', data: response.data);
+      if (response.statusCode != 200 &&
+          response.statusCode != 201 &&
+          response.statusCode != 204) {
+        throw ServerException(
+          message: 'Requesting login OTP failed',
+          data: response.data,
+        );
       }
       // Success, no body expected
     } on DioException catch (e) {
       if (e.error is AppException) throw e.error as AppException;
-      throw ServerException(message: e.message ?? 'Network error during login OTP request', data: e.response?.data);
+      throw ServerException(
+        message: e.message ?? 'Network error during login OTP request',
+        data: e.response?.data,
+      );
     }
   }
 
   @override
-  Future<AuthSuccessModel> verifyOtp(OtpVerificationModel otpVerification) async {
+  Future<AuthSuccessModel> verifyOtp(
+    OtpVerificationModel otpVerification,
+  ) async {
     try {
       final response = await dio.post(
         '$_baseUrl/auth/verify-otp',
@@ -61,16 +80,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         // Expecting a response like: { "user": {...}, "tokens": {...} }
         return AuthSuccessModel.fromJson(response.data as Map<String, dynamic>);
       } else {
-        throw ServerException(message: 'OTP verification failed', data: response.data);
+        throw ServerException(
+          message: 'OTP verification failed',
+          data: response.data,
+        );
       }
     } on DioException catch (e) {
       if (e.error is AppException) throw e.error as AppException;
-      throw ServerException(message: e.message ?? 'Network error during OTP verification', data: e.response?.data);
+      throw ServerException(
+        message: e.message ?? 'Network error during OTP verification',
+        data: e.response?.data,
+      );
     }
   }
 
   @override
-  Future<TokensModel> refreshToken(RefreshTokenRequestModel refreshTokenRequest) async {
+  Future<TokensModel> refreshToken(
+    RefreshTokenRequestModel refreshTokenRequest,
+  ) async {
     try {
       final response = await dio.post(
         '$_baseUrl/auth/refresh',
@@ -83,7 +110,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
     } on DioException catch (e) {
       if (e.error is AppException) throw e.error as AppException;
-      throw ServerException(message: e.message ?? 'Network error during token refresh', data: e.response?.data);
+      throw ServerException(
+        message: e.message ?? 'Network error during token refresh',
+        data: e.response?.data,
+      );
     }
   }
 
@@ -98,7 +128,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
     } on DioException catch (e) {
       if (e.error is AppException) throw e.error as AppException;
-      throw ServerException(message: e.message ?? 'Network error fetching user', data: e.response?.data);
+      throw ServerException(
+        message: e.message ?? 'Network error fetching user',
+        data: e.response?.data,
+      );
     }
   }
 }

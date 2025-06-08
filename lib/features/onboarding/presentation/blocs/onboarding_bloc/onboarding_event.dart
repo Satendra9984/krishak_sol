@@ -1,6 +1,5 @@
 part of 'onboarding_bloc.dart';
 
-@immutable
 abstract class OnboardingEvent extends Equatable {
   const OnboardingEvent();
 
@@ -8,8 +7,11 @@ abstract class OnboardingEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class OnboardingStarted extends OnboardingEvent {}
+
 class OnboardingPageChanged extends OnboardingEvent {
   final int pageIndex;
+
   const OnboardingPageChanged(this.pageIndex);
 
   @override
@@ -18,4 +20,4 @@ class OnboardingPageChanged extends OnboardingEvent {
 
 class OnboardingSkip extends OnboardingEvent {}
 
-class OnboardingFinish extends OnboardingEvent {}
+class OnboardingComplete extends OnboardingEvent {}

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:bhoomi_sakti/core/error/app_exceptions.dart';
+import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
 
 /// Base class for all failures in the app
 abstract class Failure extends Equatable {
@@ -142,6 +142,12 @@ class ValidationFailure extends Failure {
   @override
   String toString() =>
       'ValidationFailure: $message (${validationErrors.keys.join(', ')})';
+}
+
+/// Failure for server related errors
+class ServerFailure extends Failure {
+  const ServerFailure({String message = 'Server error occurred', String? code, dynamic data})
+      : super(message, code: code ?? 'SERVER_ERROR', data: data);
 }
 
 /// Failure for cache related errors
