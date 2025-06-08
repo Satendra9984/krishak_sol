@@ -50,6 +50,11 @@ dependencies:
   intl: ^0.19.0              # For date formatting
   percent_indicator: ^4.2.3   # For circular progress indicators
   flutter_launcher_icons: ^0.13.1  # For app icons
+  equatable: ^2.0.5               # For value equality
+  pretty_dio_logger: ^1.4.0        # For pretty logging of Dio HTTP requests
+  flutter_secure_storage: ^9.2.4
+  shared_preferences: ^2.2.3 # For storing simple data like onboarding status
+  pinput: ^5.0.1
 
 dev_dependencies:
   flutter_test:

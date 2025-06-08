@@ -5,12 +5,17 @@ import 'package:bhoomi_sakti/app/config/flavors/flavor_config.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:bhoomi_sakti/app/core/di/riverpod_providers.dart'; // Added import
+import 'package:shared_preferences/shared_preferences.dart'; // For SharedPreferences
+import 'package:bhoomi_sakti/features/auth/auth_providers.dart'; // For sharedPreferencesProvider
 
 // TODO: Import your Isar schemas here
 // import 'package:bhoomi_sakti/features/some_feature/data/models/some_schema.dart';
 
 Future<void> mainCommon(FlavorConfig flavorConfig) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize SharedPreferences
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // Initialize Isar
   // final dir = await getApplicationDocumentsDirectory();
@@ -23,6 +28,7 @@ Future<void> mainCommon(FlavorConfig flavorConfig) async {
   runApp(
     ProviderScope(
       overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
         // Make Isar instance available via a provider
         // Ensure riverpod_providers.dart has `isarInstanceProvider` defined.
         // Example: final isarInstanceProvider = Provider<Isar>((ref) => throw UnimplementedError());
