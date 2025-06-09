@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
-import 'package:bhoomi_sakti/core/theme/app_colors.dart';
+import 'package:bhoomi_sakti/app/config/theme/app_colors.dart';
 
 class SoilHealthCard extends StatelessWidget {
   const SoilHealthCard({super.key});

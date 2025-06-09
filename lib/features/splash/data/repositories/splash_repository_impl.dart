@@ -1,4 +1,4 @@
-import 'package:bhoomi_sakti/app/core/error/failures.dart';
+import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/features/splash/domain/entities/app_config.dart';
 import 'package:bhoomi_sakti/features/splash/domain/repositories/splash_repository.dart';
 import 'package:bhoomi_sakti/features/splash/data/datasources/local/splash_local_data_source.dart';

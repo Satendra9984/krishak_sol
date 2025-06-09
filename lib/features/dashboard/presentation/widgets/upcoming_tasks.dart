@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:bhoomi_sakti/core/theme/app_colors.dart';
+import 'package:bhoomi_sakti/app/config/theme/app_colors.dart';
 
 class Task {
   final String id;
@@ -142,11 +142,7 @@ class UpcomingTasks extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.check_circle_outline,
-            color: Colors.grey[400],
-            size: 48,
-          ),
+          Icon(Icons.check_circle_outline, color: Colors.grey[400], size: 48),
           const SizedBox(height: 8),
           Text(
             'No upcoming tasks',
@@ -159,10 +155,7 @@ class UpcomingTasks extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'You\'re all caught up!',
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: Colors.grey[500],
-            ),
+            style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[500]),
           ),
         ],
       ),

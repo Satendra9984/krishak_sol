@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/features/auth/auth_providers.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/verify_otp_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/verify_otp_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/verify_otp_state.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login_state.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup_state.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/otp_verification/verify_otp_bloc.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/otp_verification/verify_otp_event.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/otp_verification/verify_otp_state.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_bloc.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_event.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_state.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_bloc.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_event.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_state.dart';
 import 'dart:async';
 import 'package:pinput/pinput.dart';
 
@@ -27,7 +27,8 @@ class OtpVerificationPage extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<OtpVerificationPage> createState() => _OtpVerificationPageState();
+  ConsumerState<OtpVerificationPage> createState() =>
+      _OtpVerificationPageState();
 }
 
 class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
@@ -72,7 +73,9 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
   void _onVerifyOtpPressed() {
     if (_formKey.currentState!.validate()) {
       // widget.mobileNumber should always be available here due to constructor requirements
-      ref.read(verifyOtpBlocProvider).add(
+      ref
+          .read(verifyOtpBlocProvider)
+          .add(
             VerifyOtpButtonPressed(
               mobileNumber: widget.mobileNumber,
               otp: _otpController.text,
@@ -85,11 +88,15 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     if (_canResendOtp) {
       startResendTimer(); // Restart timer
       if (widget.flowType == OtpFlowType.login) {
-        ref.read(loginBlocProvider).add(ResendLoginOtp(mobileNumber: widget.mobileNumber));
+        ref
+            .read(loginBlocProvider)
+            .add(ResendLoginOtp(mobileNumber: widget.mobileNumber));
       } else if (widget.flowType == OtpFlowType.signup) {
         // For signup resend, we pass an empty name as discussed.
         // This might need adjustment based on backend behavior.
-        ref.read(signupBlocProvider).add(ResendSignupOtp(mobileNumber: widget.mobileNumber));
+        ref
+            .read(signupBlocProvider)
+            .add(ResendSignupOtp(mobileNumber: widget.mobileNumber));
       }
     }
   }
@@ -105,7 +112,11 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
             listener: (context, state) {
               if (state is VerifyOtpFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('OTP Verification Failed: ${state.failure.message}')),
+                  SnackBar(
+                    content: Text(
+                      'OTP Verification Failed: ${state.failure.message}',
+                    ),
+                  ),
                 );
               }
               // VerifyOtpSuccess is handled by AuthNotifier & GoRouter redirect
@@ -115,14 +126,18 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
             bloc: ref.watch(loginBlocProvider),
             listener: (context, state) {
               if (state is LoginOtpSentSuccess) {
-                 // Check if it's a resend scenario, maybe by a flag if needed
+                // Check if it's a resend scenario, maybe by a flag if needed
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('OTP Resent Successfully!')),
                 );
               } else if (state is LoginFailure) {
-                 // Differentiate from initial send failure if necessary
+                // Differentiate from initial send failure if necessary
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to Resend OTP: ${state.failure.message}')),
+                  SnackBar(
+                    content: Text(
+                      'Failed to Resend OTP: ${state.failure.message}',
+                    ),
+                  ),
                 );
               }
             },
@@ -136,7 +151,11 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                 );
               } else if (state is SignupFailure) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to Resend OTP: ${state.failure.message}')),
+                  SnackBar(
+                    content: Text(
+                      'Failed to Resend OTP: ${state.failure.message}',
+                    ),
+                  ),
                 );
               }
             },
@@ -194,8 +213,8 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                   TextButton(
                     onPressed: _canResendOtp ? _onResendOtpPressed : null,
                     child: Text(
-                      _canResendOtp 
-                          ? 'Resend OTP' 
+                      _canResendOtp
+                          ? 'Resend OTP'
                           : 'Resend OTP in $_resendTimerSeconds s',
                     ),
                   ),

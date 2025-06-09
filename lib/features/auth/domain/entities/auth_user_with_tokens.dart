@@ -1,5 +1,6 @@
-import 'user_entity.dart';
-import 'tokens_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
+
+import '../../../../common/auth/entities/user_entity.dart';
 
 class AuthUserWithTokens {
   final UserEntity user;

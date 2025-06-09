@@ -1,6 +1,6 @@
+import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 import 'package:equatable/equatable.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/user_entity.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/tokens_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 
 abstract class AuthState extends Equatable {

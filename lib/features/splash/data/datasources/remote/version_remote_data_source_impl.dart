@@ -1,8 +1,8 @@
 import 'version_remote_data_source.dart';
 
 import 'package:bhoomi_sakti/features/auth/domain/entities/auth_user_with_tokens.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/user_entity.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/tokens_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 
 class VersionRemoteDataSourceImpl implements VersionRemoteDataSource {
   @override

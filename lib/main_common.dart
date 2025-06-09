@@ -1,3 +1,4 @@
+import 'package:bhoomi_sakti/app/core/providers/shared_preferences_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/features/app.dart';
@@ -27,26 +28,7 @@ Future<void> mainCommon(FlavorConfig flavorConfig) async {
 
   runApp(
     ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
-        // Make Isar instance available via a provider
-        // Ensure riverpod_providers.dart has `isarInstanceProvider` defined.
-        // Example: final isarInstanceProvider = Provider<Isar>((ref) => throw UnimplementedError());
-        // This line will override that definition with the actual Isar instance.
-        // Adjust if your provider is named differently or if you have a specific type for it.
-        // Assuming 'isarInstanceProvider' is defined in 'riverpod_providers.dart'
-        // and needs to be overridden here.
-        // If 'isarInstanceProvider' is not yet created, you'll need to define it first.
-        // For now, we'll assume it exists and needs this override.
-        // import 'package:bhoomi_sakti/app/core/di/riverpod_providers.dart'; // Ensure this import if not present
-        // isarInstanceProvider.overrideWithValue(isar), // This line will cause an error if isarInstanceProvider is not imported or defined.
-        // isarInstanceProvider.overrideWithValue(isar), // This line will cause an error if isarInstanceProvider is not imported or defined.
-        // For now, let's add a placeholder for the provider override.
-        // You will need to define `isarInstanceProvider` in `riverpod_providers.dart` like:
-        // final isarInstanceProvider = Provider<Isar>((ref) => throw UnimplementedError('Isar instance not provided'));
-        // Then uncomment the line below after ensuring the provider is imported.
-        // isarInstanceProvider.overrideWithValue(isar),
-      ],
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
       child: const BhoomiSaktiApp(),
     ),
   );

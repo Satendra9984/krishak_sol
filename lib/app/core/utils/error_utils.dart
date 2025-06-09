@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:bhoomi_sakti/core/error/app_exceptions.dart';
-import 'package:bhoomi_sakti/core/error/app_failures.dart';
+import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
+import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 
 /// A utility class for handling and displaying errors in a user-friendly way
 class ErrorUtils {

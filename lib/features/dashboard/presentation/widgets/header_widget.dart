@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:bhoomi_sakti/core/theme/app_colors.dart';
+import 'package:bhoomi_sakti/app/config/theme/app_colors.dart';
 
 class HeaderWidget extends StatelessWidget {
   const HeaderWidget({super.key});

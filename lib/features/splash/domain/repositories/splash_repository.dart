@@ -1,4 +1,4 @@
-import 'package:bhoomi_sakti/app/core/error/failures.dart';
+import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/features/splash/domain/entities/app_config.dart';
 import 'package:fpdart/fpdart.dart';
 
@@ -9,6 +9,7 @@ abstract class SplashRepository {
   Future<Either<Failure, bool>> checkForUpdates();
   Future<Either<Failure, bool>> isFirstLaunch();
   Future<Either<Failure, void>> setFirstLaunchComplete();
+
   /// Returns AuthUserWithTokens if authenticated, null if not authenticated
   Future<Either<Failure, AuthUserWithTokens?>> checkAuthAndGetUser();
 }

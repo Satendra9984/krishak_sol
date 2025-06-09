@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:bhoomi_sakti/core/theme/app_colors.dart';
+import 'package:bhoomi_sakti/app/config/theme/app_colors.dart';
 
 class WeatherCard extends StatelessWidget {
   const WeatherCard({super.key});
@@ -48,11 +48,7 @@ class WeatherCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const Icon(
-                Icons.wb_sunny,
-                color: Colors.white,
-                size: 48,
-              ),
+              const Icon(Icons.wb_sunny, color: Colors.white, size: 48),
             ],
           ),
           const SizedBox(height: 16),

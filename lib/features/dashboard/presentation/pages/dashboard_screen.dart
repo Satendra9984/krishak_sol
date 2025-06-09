@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:bhoomi_sakti/core/theme/app_colors.dart';
+import 'package:bhoomi_sakti/app/config/theme/app_colors.dart';
 import '../widgets/header_widget.dart';
 import '../widgets/weather_card.dart';
 import '../widgets/soil_health_card.dart';

@@ -1,13 +1,13 @@
-import 'package:bhoomi_sakti/features/auth/domain/entities/tokens_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 import 'package:bhoomi_sakti/features/splash/domain/entities/app_config.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:bhoomi_sakti/features/splash/domain/usecases/check_version.dart';
 import 'package:bhoomi_sakti/features/splash/domain/usecases/check_first_launch.dart';
 import 'package:bhoomi_sakti/features/splash/domain/usecases/check_auth_and_get_user.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/user_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
 
 import 'package:bhoomi_sakti/app/core/usecases/usecase.dart';
 

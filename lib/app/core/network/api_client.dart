@@ -25,14 +25,16 @@ class ApiClient {
     _dio.options.headers['Accept'] = 'application/json';
 
     // Add interceptors
-    _dio.interceptors.add(PrettyDioLogger(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
-      responseHeader: false,
-      error: true,
-      compact: true,
-    ));
+    _dio.interceptors.add(
+      PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseBody: true,
+        responseHeader: false,
+        error: true,
+        compact: true,
+      ),
+    );
 
     if (interceptors != null) {
       _dio.interceptors.addAll(interceptors);

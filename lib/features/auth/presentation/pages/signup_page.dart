@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:bhoomi_sakti/app/config/router/app_route_paths.dart';
+import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
 import 'package:bhoomi_sakti/features/auth/auth_providers.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup_state.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_bloc.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_event.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_state.dart';
 import 'package:bhoomi_sakti/features/auth/presentation/pages/otp_verification_page.dart'; // For OtpFlowType
 
 class SignupPage extends ConsumerStatefulWidget {
@@ -30,7 +30,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   void _onSignupPressed() {
     if (_formKey.currentState!.validate()) {
-      ref.read(signupBlocProvider).add(
+      ref
+          .read(signupBlocProvider)
+          .add(
             SignupButtonPressed(
               name: _nameController.text,
               mobileNumber: _mobileController.text,
@@ -48,7 +50,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         listener: (context, state) {
           if (state is SignupFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Signup Failed: ${state.failure.message}')),
+              SnackBar(
+                content: Text('Signup Failed: ${state.failure.message}'),
+              ),
             );
           } else if (state is SignupOtpSentSuccess) {
             // Navigate to OTP verification page
@@ -82,13 +86,16 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _mobileController,
-                    decoration: const InputDecoration(labelText: 'Mobile Number'),
+                    decoration: const InputDecoration(
+                      labelText: 'Mobile Number',
+                    ),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your mobile number';
                       }
-                      if (value.length != 10) { // Basic validation
+                      if (value.length != 10) {
+                        // Basic validation
                         return 'Mobile number must be 10 digits';
                       }
                       return null;

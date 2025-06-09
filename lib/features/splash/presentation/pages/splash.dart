@@ -1,4 +1,6 @@
 // Placeholder for initial screen - replace with your actual initial screen
+import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
+import 'package:bhoomi_sakti/common/app_common_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -53,13 +55,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         bloc: ref.read(splashBlocProvider),
         listener: (context, state) {
           if (state is NavigateToOnboarding) {
-            context.go('/onboarding');
+            context.go(AppRoutePaths.onboarding);
           } else if (state is NavigateToAuth) {
-            context.go('/login');
+            context.go(AppRoutePaths.login);
           } else if (state is NavigateToHome) {
             // Set the user profile and tokens globally before navigating to home
-            ref.read(authNotifierProvider.notifier).setAuthenticatedUser(state.user, state.tokens);
-            context.go('/home');
+            ref
+                .read(authNotifierProvider.notifier)
+                .setAuthenticatedUser(state.user, state.tokens);
+            context.go(AppRoutePaths.home);
           }
         },
         child: Center(

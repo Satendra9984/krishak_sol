@@ -1,4 +1,4 @@
-import 'package:bhoomi_sakti/features/auth/domain/entities/tokens_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 
 class TokensModel extends TokensEntity {
   const TokensModel({
@@ -12,12 +12,14 @@ class TokensModel extends TokensEntity {
     return TokensModel(
       accessToken: json['accessToken'] as String,
       refreshToken: json['refreshToken'] as String,
-      accessExpiry: json['accessExpiry'] != null
-          ? DateTime.tryParse(json['accessExpiry'] as String)
-          : null,
-      refreshExpiry: json['refreshExpiry'] != null
-          ? DateTime.tryParse(json['refreshExpiry'] as String)
-          : null,
+      accessExpiry:
+          json['accessExpiry'] != null
+              ? DateTime.tryParse(json['accessExpiry'] as String)
+              : null,
+      refreshExpiry:
+          json['refreshExpiry'] != null
+              ? DateTime.tryParse(json['refreshExpiry'] as String)
+              : null,
     );
   }
 

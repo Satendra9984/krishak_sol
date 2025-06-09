@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/features/auth/auth_providers.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login_state.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_bloc.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_event.dart';
+import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_state.dart';
 import 'package:bhoomi_sakti/features/auth/presentation/pages/otp_verification_page.dart'; // For OtpFlowType
 import 'package:go_router/go_router.dart';
-import 'package:bhoomi_sakti/app/config/router/app_route_paths.dart';
+import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -19,7 +19,6 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _mobileController = TextEditingController();
-  
 
   @override
   void dispose() {
@@ -29,11 +28,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _onLoginPressed() {
     if (_formKey.currentState!.validate()) {
-      ref.read(loginBlocProvider).add(
-            LoginButtonPressed(
-              mobileNumber: _mobileController.text,
-            ),
-          );
+      ref
+          .read(loginBlocProvider)
+          .add(LoginButtonPressed(mobileNumber: _mobileController.text));
     }
   }
 
@@ -74,13 +71,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 children: <Widget>[
                   TextFormField(
                     controller: _mobileController,
-                    decoration: const InputDecoration(labelText: 'Mobile Number'),
+                    decoration: const InputDecoration(
+                      labelText: 'Mobile Number',
+                    ),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your mobile number';
                       }
-                      if (value.length != 10) { // Basic validation
+                      if (value.length != 10) {
+                        // Basic validation
                         return 'Mobile number must be 10 digits';
                       }
                       return null;

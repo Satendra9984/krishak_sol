@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:bhoomi_sakti/core/theme/app_colors.dart';
+import 'package:bhoomi_sakti/app/config/theme/app_colors.dart';
 
 class QuickAction {
   final String title;
   final IconData icon;
   final Color color;
 
-  QuickAction({
-    required this.title,
-    required this.icon,
-    required this.color,
-  });
+  QuickAction({required this.title, required this.icon, required this.color});
 }
 
 class QuickActions extends StatelessWidget {
@@ -85,11 +81,7 @@ class QuickActions extends StatelessWidget {
                 color: action.color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                action.icon,
-                color: action.color,
-                size: 24,
-              ),
+              child: Icon(action.icon, color: action.color, size: 24),
             ),
             const SizedBox(height: 8),
             Text(

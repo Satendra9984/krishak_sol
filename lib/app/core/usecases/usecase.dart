@@ -1,7 +1,6 @@
+import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:equatable/equatable.dart';
-
-import 'package:bhoomi_sakti/app/core/error/failures.dart';
 
 /// Base use case interface for synchronous operations
 abstract class UseCase<Type, Params> {

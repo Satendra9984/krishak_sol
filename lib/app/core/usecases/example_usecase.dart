@@ -1,7 +1,7 @@
-import 'package:dartz/dartz.dart';
+import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:equatable/equatable.dart';
+import 'package:fpdart/fpdart.dart';
 
-import '../../error/app_failures.dart';
 import 'usecase.dart';
 
 /// Example entity
@@ -25,10 +25,7 @@ class ExampleParams extends Equatable {
   final String id;
   final bool fetchDetails;
 
-  const ExampleParams({
-    required this.id,
-    this.fetchDetails = false,
-  });
+  const ExampleParams({required this.id, this.fetchDetails = false});
 
   @override
   List<Object> get props => [id, fetchDetails];
