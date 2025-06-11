@@ -1,115 +1,80 @@
-import 'package:dio/dio.dart';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
-import 'package:bhoomi_sakti/app/core/services/token_storage_service.dart';
-import 'package:bhoomi_sakti/features/auth/domain/repositories/auth_repository.dart';
+import 'package:bhoomi_sakti/app/core/services/token_storage_service_impl.dart';
+import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
+import 'package:dio/dio.dart';
 
 class RefreshInterceptor extends Interceptor {
-  final TokenStorageService tokenStorageService;
-  final AuthRepository authRepository; // Or RefreshTokenUsecase
-  final Dio dio; // Used to retry the request
-
-  // TODO: Implement a proper locking mechanism to prevent multiple concurrent refresh calls
+  final TokenStorageService _tokenStorage;
+  final Dio _dio;
   bool _isRefreshing = false;
-  List<Function(String)> _requestQueue = [];
+  final List<RequestOptions> _queue = [];
 
-  RefreshInterceptor({
-    required this.tokenStorageService,
-    required this.authRepository,
-    required this.dio,
-  });
+  RefreshInterceptor(this._tokenStorage, this._dio);
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401 && err.error is UnauthorizedException) {
-      // Avoid refresh loops if the refresh token itself is invalid
-      if (err.error is InvalidRefreshTokenException || err.requestOptions.path.endsWith('/auth/refresh')) {
-        await tokenStorageService.clearTokens();
-        // Optionally, notify AuthNotifier to update state to unauthenticated
-        return handler.next(err); 
-      }
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
+    final status = err.response?.statusCode;
+    final isAuthEndpoint = err.requestOptions.path.endsWith('/auth/refresh');
 
-      if (_isRefreshing) {
-        // If already refreshing, queue the request
-        _requestQueue.add((newAccessToken) async {
-          err.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
-          try {
-            handler.resolve(await dio.fetch(err.requestOptions));
-          } catch (e) {
-            handler.reject(err); // Or a new DioException if retry fails
+    if (status == 401 && !isAuthEndpoint) {
+      // Queue this failed request
+      _queue.add(err.requestOptions);
+
+      if (!_isRefreshing) {
+        _isRefreshing = true;
+        try {
+          final refreshToken = _tokenStorage.refreshToken;
+          if (refreshToken == null || refreshToken.isEmpty) {
+            throw InvalidRefreshTokenException();
           }
-        });
-        return; // Don't proceed further until token is refreshed
-      }
 
-      _isRefreshing = true;
+          // Lock outgoing requests
+          // _dio.interceptors.lo.lock();
+          // _dio.interceptors.responseLock.lock();
 
-      try {
-        final currentRefreshToken = await tokenStorageService.getRefreshToken();
-        if (currentRefreshToken == null) {
-          _isRefreshing = false;
-          _clearQueue(null);
-          await tokenStorageService.clearTokens();
-          return handler.next(err); // No refresh token, propagate error
-        }
+          // Call refresh endpoint directly without interceptors
+          final opts = Options(
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          );
+          final resp = await _dio.post(
+            '/auth/refresh',
+            data: {'refreshToken': refreshToken},
+            options: opts,
+          );
 
-        final result = await authRepository.refreshToken(currentRefreshToken);
+          final newTokens = TokensEntity.fromJson(resp.data);
+          await _tokenStorage.storeTokens(newTokens);
 
-        await result.fold(
-          (failure) async {
-            _isRefreshing = false;
-            _clearQueue(null);
-            await tokenStorageService.clearTokens();
-            // Propagate the original error or a new one indicating refresh failure
-            // Consider creating a specific SessionExpiredFailure/Exception
-            return handler.next(DioException(
+          // Retry all queued requests with new token
+          for (var requestOptions in _queue) {
+            requestOptions.headers['Authorization'] =
+                'Bearer ${newTokens.accessToken}';
+            _dio.fetch(requestOptions);
+          }
+        } catch (e) {
+          // Refresh failed: clear tokens and propagate
+          await _tokenStorage.clearTokens();
+          handler.next(
+            DioException(
               requestOptions: err.requestOptions,
-              error: InvalidRefreshTokenException(message: failure.message),
-              response: err.response, // Pass original response
-              type: err.type // Preserve original type
-            ));
-          },
-          (newTokens) async {
-            await tokenStorageService.saveTokens(newTokens);
-            _isRefreshing = false;
-            _clearQueue(newTokens.accessToken);
-            
-            // Retry the original request with the new token
-            err.requestOptions.headers['Authorization'] = 'Bearer ${newTokens.accessToken}';
-            try {
-                return handler.resolve(await dio.fetch(err.requestOptions));
-            } catch (e) {
-                return handler.reject(DioException(
-                    requestOptions: err.requestOptions, 
-                    error: e, 
-                    response: err.response
-                ));
-            }
-          },
-        );
-      } catch (e) {
-        _isRefreshing = false;
-        _clearQueue(null);
-        await tokenStorageService.clearTokens();
-        return handler.next(DioException(
-            requestOptions: err.requestOptions, 
-            error: e, 
-            response: err.response
-        ));
+              error: e,
+              response: err.response,
+              type: err.type,
+            ),
+          );
+        } finally {
+          _isRefreshing = false;
+          _queue.clear();
+          // Unlock
+          // _dio.interceptors.requestLock.unlock();
+          // _dio.interceptors.responseLock.unlock();
+        }
       }
-    } else {
-      return handler.next(err);
+      return; // queued or handling
     }
-  }
-
-  void _clearQueue(String? newAccessToken) {
-    for (var callback in _requestQueue) {
-      if (newAccessToken != null) {
-        callback(newAccessToken);
-      } else {
-        // If refresh failed, we might need to reject these queued requests
-        // For now, this logic assumes they will fail similarly or be handled by their own error paths
-      }
-    }
-    _requestQueue.clear();
+    handler.next(err);
   }
 }

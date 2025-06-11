@@ -2,14 +2,14 @@ import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/features/splash/domain/entities/app_config.dart';
 import 'package:bhoomi_sakti/features/splash/domain/repositories/splash_repository.dart';
 import 'package:bhoomi_sakti/features/splash/data/datasources/local/splash_local_data_source.dart';
-import 'package:bhoomi_sakti/features/splash/data/datasources/remote/version_remote_data_source.dart';
+import 'package:bhoomi_sakti/features/splash/data/datasources/remote/splash_remote_data_source.dart';
 import 'package:fpdart/fpdart.dart';
 
-import 'package:bhoomi_sakti/features/auth/domain/entities/auth_user_with_tokens.dart';
+import 'package:bhoomi_sakti/common/auth/entities/auth_user_with_tokens.dart';
 
 class SplashRepositoryImpl implements SplashRepository {
   final SplashLocalDataSource localDataSource;
-  final VersionRemoteDataSource remoteDataSource;
+  final SplashRemoteDataSource remoteDataSource;
 
   SplashRepositoryImpl({
     required this.localDataSource,
@@ -53,16 +53,6 @@ class SplashRepositoryImpl implements SplashRepository {
     try {
       final result = await localDataSource.isFirstLaunch();
       return Right(result);
-    } catch (e) {
-      return Left(CacheFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> setFirstLaunchComplete() async {
-    try {
-      await localDataSource.setFirstLaunchComplete();
-      return const Right(null);
     } catch (e) {
       return Left(CacheFailure());
     }

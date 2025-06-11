@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bhoomi_sakti/features/auth/auth_providers.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_state.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/pages/otp_verification_page.dart'; // For OtpFlowType
+import 'package:bhoomi_sakti/features/authentication/auth_providers.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_bloc.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_event.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_state.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/pages/otp_verification_page.dart'; // For OtpFlowType
 import 'package:go_router/go_router.dart';
 import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
 

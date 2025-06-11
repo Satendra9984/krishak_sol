@@ -16,6 +16,14 @@ class NoInternetException extends AppException {
   const NoInternetException() : super('No internet connection available');
 }
 
+/// Custom exception for token storage issues
+class TokenStorageException extends AppException {
+  TokenStorageException(super.message);
+
+  @override
+  String toString() => 'TokenStorageException: $message';
+}
+
 /// Exception thrown when a request times out
 class TimeoutException extends AppException {
   const TimeoutException(String message) : super(message);
@@ -23,11 +31,8 @@ class TimeoutException extends AppException {
 
 /// Exception for bad request errors (400)
 class BadRequestException extends AppException {
-  const BadRequestException(
-    String message, {
-    String? code,
-    dynamic data,
-  }) : super(message, code: code, data: data);
+  const BadRequestException(String message, {String? code, dynamic data})
+    : super(message, code: code, data: data);
 }
 
 /// Exception for server communication errors
@@ -142,9 +147,15 @@ class UnexpectedException extends AppException {
   }) : super(message, code: code, data: data);
 }
 
+/// Exception for SSL certificate errors
+class CertificateException extends AppException {
+  const CertificateException([String message = 'Bad certificate']) : super(message);
+}
+
 /// Exception for when a request is cancelled
 class RequestCancelledException extends AppException {
-  const RequestCancelledException(String message) : super(message, code: 'REQUEST_CANCELLED');
+  const RequestCancelledException(String message)
+    : super(message, code: 'REQUEST_CANCELLED');
 }
 
 /// Extension to convert exceptions to user-friendly messages

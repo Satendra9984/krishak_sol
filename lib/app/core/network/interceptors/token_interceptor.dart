@@ -1,5 +1,5 @@
+import 'package:bhoomi_sakti/app/core/services/token_storage_service_impl.dart';
 import 'package:dio/dio.dart';
-import 'package:bhoomi_sakti/app/core/services/token_storage_service.dart';
 
 class TokenInterceptor extends Interceptor {
   final TokenStorageService tokenStorageService;
@@ -8,18 +8,21 @@ class TokenInterceptor extends Interceptor {
     '/auth/login',
     '/auth/signup',
     '/auth/verify-otp',
-    '/auth/refresh'
+    '/auth/refresh',
   ];
 
   TokenInterceptor({required this.tokenStorageService});
 
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     // Check if the request path is in the excluded list
     bool isExcluded = _excludedPaths.any((path) => options.path.endsWith(path));
 
     if (!isExcluded) {
-      final accessToken = await tokenStorageService.getAccessToken();
+      final accessToken = tokenStorageService.accessToken;
       if (accessToken != null && accessToken.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $accessToken';
       }

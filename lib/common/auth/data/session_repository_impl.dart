@@ -6,8 +6,8 @@ import '../entities/tokens_entity.dart';
 import '../repositories/session_repository.dart';
 
 // Import your remote data source as needed. Adjust the import below to match your structure.
-import 'package:bhoomi_sakti/features/auth/data/datasources/auth_remote_data_source_impl.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/refresh_token_request_model.dart';
+import 'package:bhoomi_sakti/features/authentication/data/datasources/auth_remote_data_source_impl.dart';
+import 'package:bhoomi_sakti/common/models/refresh_token_request_model.dart';
 
 class SessionRepositoryImpl implements SessionRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -15,7 +15,9 @@ class SessionRepositoryImpl implements SessionRepository {
   SessionRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, TokensEntity>> refreshToken(String refreshToken) async {
+  Future<Either<Failure, TokensEntity>> refreshToken(
+    String refreshToken,
+  ) async {
     try {
       final refreshTokenRequest = RefreshTokenRequestModel(
         refreshToken: refreshToken,
