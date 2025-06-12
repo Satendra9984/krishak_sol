@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/auth_success_entity.dart'; // Added import
+import 'package:bhoomi_sakti/features/authentication/domain/entities/auth_success_entity.dart'; // Added import
 
 abstract class AuthRepository {
   Future<Either<Failure, void>> requestSignupOtp({

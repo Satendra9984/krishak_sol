@@ -3,11 +3,9 @@ import 'package:fpdart/fpdart.dart';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
-import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 import 'package:bhoomi_sakti/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:bhoomi_sakti/features/authentication/data/models/otp_request_model.dart';
 import 'package:bhoomi_sakti/features/authentication/data/models/otp_verification_model.dart';
-import 'package:bhoomi_sakti/common/models/refresh_token_request_model.dart';
 import 'package:bhoomi_sakti/features/authentication/data/models/auth_success_model.dart'; // Added import
 import 'package:bhoomi_sakti/features/authentication/domain/entities/auth_success_entity.dart'; // Explicit import for AuthSuccessEntity
 
@@ -69,25 +67,6 @@ class AuthRepositoryImpl implements AuthRepository {
       final AuthSuccessModel authSuccessModel = await remoteDataSource
           .verifyOtp(otpVerification);
       return Right(authSuccessModel.toEntity());
-    } on AppException catch (e) {
-      return Left(ExceptionFailure(e));
-    } catch (e) {
-      return Left(ExceptionFailure(UnexpectedException(message: e.toString())));
-    }
-  }
-
-  @override
-  Future<Either<Failure, TokensEntity>> refreshToken(
-    String refreshToken,
-  ) async {
-    try {
-      final refreshTokenRequest = RefreshTokenRequestModel(
-        refreshToken: refreshToken,
-      );
-      final tokensModel = await remoteDataSource.refreshToken(
-        refreshTokenRequest,
-      );
-      return Right(tokensModel.toEntity());
     } on AppException catch (e) {
       return Left(ExceptionFailure(e));
     } catch (e) {

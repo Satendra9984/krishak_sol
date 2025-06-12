@@ -1,12 +1,11 @@
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/app/core/services/token_storage_service_impl.dart';
+import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
 import 'package:bhoomi_sakti/features/splash/domain/entities/app_config.dart';
 import 'package:bhoomi_sakti/features/splash/domain/repositories/splash_repository.dart';
 import 'package:bhoomi_sakti/features/splash/data/datasources/splash_local_data_source.dart';
 import 'package:bhoomi_sakti/features/splash/data/datasources/splash_remote_data_source.dart';
 import 'package:fpdart/fpdart.dart';
-
-import 'package:bhoomi_sakti/common/auth/entities/auth_user_with_tokens.dart';
 
 class SplashRepositoryImpl implements SplashRepository {
   final SplashLocalDataSource localDataSource;
@@ -63,7 +62,7 @@ class SplashRepositoryImpl implements SplashRepository {
 
   /// Returns AuthUserWithTokens if authenticated, null if not authenticated
   @override
-  Future<Either<Failure, AuthUserWithTokens?>> checkAuthAndGetUser() async {
+  Future<Either<Failure, UserEntity?>> checkAuthAndGetUser() async {
     try {
       final result = await remoteDataSource.checkAuthAndGetUser();
       // result should be AuthUserWithTokens or null

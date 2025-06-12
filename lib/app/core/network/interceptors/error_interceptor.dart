@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
 
@@ -31,20 +29,26 @@ class ErrorInterceptor extends Interceptor {
           case 401:
             final errorCode = data is Map ? data['errorCode'] : null;
             if (errorCode == 'INVALID_REFRESH_TOKEN') {
-              appEx = InvalidRefreshTokenException(message: msg ?? 'Unknown error');
+              appEx = InvalidRefreshTokenException(
+                message: msg ?? 'Unknown error',
+              );
             } else {
               appEx = UnauthorizedException(message: msg ?? 'Unknown error');
             }
             break;
           case 403:
-            appEx = UnauthorizedException(message: 'Forbidden: ${msg ?? 'Unknown error'}');
+            appEx = UnauthorizedException(
+              message: 'Forbidden: ${msg ?? 'Unknown error'}',
+            );
             break;
           case 404:
             appEx = NotFoundException(message: msg ?? 'Unknown error');
             break;
           case 500:
           default:
-            appEx = ServerException(message: 'Server error: ${msg ?? 'Unknown error'}');
+            appEx = ServerException(
+              message: 'Server error: ${msg ?? 'Unknown error'}',
+            );
             break;
         }
         break;

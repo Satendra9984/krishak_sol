@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:bhoomi_sakti/app/core/network/api_client.dart';
-import 'package:isar/isar.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 // TODO: Replace with actual base URL from configuration

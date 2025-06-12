@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:bhoomi_sakti/app/core/network/api_client.dart';
-import 'package:bhoomi_sakti/common/auth/entities/auth_user_with_tokens.dart';
+import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
 
 abstract class SplashRemoteDataSource {
   Future<String> getLatestVersion();
 
   /// Returns AuthUserWithTokens if authenticated, null if not
-  Future<AuthUserWithTokens?> checkAuthAndGetUser();
+  Future<UserEntity?> checkAuthAndGetUser();
 }
 
 class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
@@ -22,7 +22,16 @@ class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
   }
 
   @override
-  Future<AuthUserWithTokens?> checkAuthAndGetUser() {
-    throw UnimplementedError();
+  Future<UserEntity?> checkAuthAndGetUser() async {
+    try {
+      final response = await apiClient.get('/auth/check-auth');
+      if (response.statusCode == 200) {
+        return UserEntity.fromJson(response.data);
+      }
+
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }

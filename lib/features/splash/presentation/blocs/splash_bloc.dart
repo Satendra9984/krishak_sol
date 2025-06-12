@@ -1,4 +1,3 @@
-import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 import 'package:bhoomi_sakti/features/splash/domain/entities/app_config.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/features/splash/domain/usecases/initialize_tokens.dart';
