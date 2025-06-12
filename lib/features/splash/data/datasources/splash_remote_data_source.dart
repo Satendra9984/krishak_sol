@@ -24,7 +24,7 @@ class SplashRemoteDataSourceImpl implements SplashRemoteDataSource {
   @override
   Future<UserEntity?> checkAuthAndGetUser() async {
     try {
-      final response = await apiClient.get('/auth/check-auth');
+      final response = await apiClient.get('/user/me');
       if (response.statusCode == 200) {
         return UserEntity.fromJson(response.data);
       }

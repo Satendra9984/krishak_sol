@@ -1,4 +1,4 @@
-import 'package:bhoomi_sakti/app/config/providers/core_providers.dart';
+import 'package:bhoomi_sakti/app/core/providers/core_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/app/router/app_router.dart' show goRouterProvider;

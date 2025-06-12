@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/auth_success_entity.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/entities/auth_success_entity.dart';
 
 abstract class VerifyOtpState extends Equatable {
   const VerifyOtpState();

@@ -5,20 +5,17 @@ class ApiClient {
   final Dio _dio;
   final String baseUrl;
 
-  ApiClient({
-    required this.baseUrl,
-    String? token,
-    List<Interceptor>? interceptors,
-  }) : _dio = Dio() {
+  ApiClient({required this.baseUrl, Dio? dio, List<Interceptor>? interceptors})
+    : _dio = dio ?? Dio() {
     _dio.options.baseUrl = baseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 30);
     _dio.options.receiveTimeout = const Duration(seconds: 30);
     _dio.options.sendTimeout = const Duration(seconds: 30);
 
     // Add auth token if provided
-    if (token != null) {
-      _dio.options.headers['Authorization'] = 'Bearer $token';
-    }
+    // if (token != null) {
+    //   _dio.options.headers['Authorization'] = 'Bearer $token';
+    // }
 
     // Add default headers
     _dio.options.headers['Content-Type'] = 'application/json';

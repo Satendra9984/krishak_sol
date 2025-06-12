@@ -1,16 +1,13 @@
 import 'package:equatable/equatable.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/user_model.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/tokens_model.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/auth_success_entity.dart';
+import 'package:bhoomi_sakti/common/models/user_model.dart';
+import 'package:bhoomi_sakti/common/models/tokens_model.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/entities/auth_success_entity.dart';
 
 class AuthSuccessModel extends Equatable {
   final UserModel user;
   final TokensModel tokens;
 
-  const AuthSuccessModel({
-    required this.user,
-    required this.tokens,
-  });
+  const AuthSuccessModel({required this.user, required this.tokens});
 
   factory AuthSuccessModel.fromJson(Map<String, dynamic> json) {
     return AuthSuccessModel(
@@ -20,17 +17,11 @@ class AuthSuccessModel extends Equatable {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'user': user.toJson(),
-      'tokens': tokens.toJson(),
-    };
+    return {'user': user.toJson(), 'tokens': tokens.toJson()};
   }
 
   AuthSuccessEntity toEntity() {
-    return AuthSuccessEntity(
-      user: user.toEntity(),
-      tokens: tokens.toEntity(),
-    );
+    return AuthSuccessEntity(user: user.toEntity(), tokens: tokens.toEntity());
   }
 
   @override

@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
-import 'package:bhoomi_sakti/features/auth/auth_providers.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_state.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/pages/otp_verification_page.dart'; // For OtpFlowType
+import 'package:bhoomi_sakti/features/authentication/auth_providers.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_bloc.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_event.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_state.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/pages/otp_verification_page.dart'; // For OtpFlowType
 
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});

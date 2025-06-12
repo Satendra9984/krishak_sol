@@ -1,10 +1,7 @@
-import 'package:bhoomi_sakti/features/auth/domain/entities/otp_verification_entity.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/entities/otp_verification_entity.dart';
 
 class OtpVerificationModel extends OtpVerificationEntity {
-  const OtpVerificationModel({
-    required super.mobileNumber,
-    required super.otp,
-  });
+  const OtpVerificationModel({required super.mobileNumber, required super.otp});
 
   factory OtpVerificationModel.fromEntity(OtpVerificationEntity entity) {
     return OtpVerificationModel(
@@ -14,9 +11,6 @@ class OtpVerificationModel extends OtpVerificationEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'mobileNumber': mobileNumber,
-      'otp': otp,
-    };
+    return {'mobileNumber': mobileNumber, 'otp': otp};
   }
 }

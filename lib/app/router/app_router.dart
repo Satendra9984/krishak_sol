@@ -10,8 +10,7 @@ import 'package:bhoomi_sakti/features/dashboard/presentation/pages/dashboard_scr
 
 import 'package:bhoomi_sakti/features/authentication/auth_routes.dart';
 import 'package:bhoomi_sakti/common/providers/auth_notifier/auth_state.dart';
-import 'package:bhoomi_sakti/features/onboarding/onboarding_providers.dart'
-    as onboarding_providers;
+import 'package:bhoomi_sakti/features/onboarding/onboarding_providers.dart';
 import 'package:bhoomi_sakti/features/onboarding/presentation/blocs/onboarding_bloc/onboarding_bloc.dart';
 import 'package:bhoomi_sakti/features/onboarding/presentation/pages/onboarding_page.dart';
 
@@ -37,14 +36,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutePaths.onboarding,
         name: AppRoutePaths.onboarding,
         builder:
-            (context, state) => ProviderScope(
-              overrides: [
-                onboarding_providers.onboardingBlocProvider.overrideWithValue(
-                  OnboardingBloc(
-                    sharedPreferences: ref.read(sharedPreferencesProvider),
-                  )..add(OnboardingStarted()),
-                ),
-              ],
+            (context, state) => BlocProvider.value(
+              value: ref.read(onboardingBlocProvider),
               child: const OnboardingPage(),
             ),
       ),

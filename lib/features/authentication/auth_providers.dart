@@ -2,18 +2,17 @@ import 'package:bhoomi_sakti/common/app_common_providers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/app/core/network/interceptors/error_interceptor.dart';
-import 'package:bhoomi_sakti/features/auth/data/datasources/auth_remote_data_source_impl.dart';
-import 'package:bhoomi_sakti/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:bhoomi_sakti/features/auth/domain/repositories/auth_repository.dart';
-import 'package:bhoomi_sakti/features/auth/domain/usecases/get_current_user_usecase.dart';
-import 'package:bhoomi_sakti/features/auth/domain/usecases/login_usecase.dart';
-import 'package:bhoomi_sakti/features/auth/domain/usecases/refresh_token_usecase.dart';
-import 'package:bhoomi_sakti/features/auth/domain/usecases/signup_usecase.dart';
-import 'package:bhoomi_sakti/features/auth/domain/usecases/verify_otp_usecase.dart';
+import 'package:bhoomi_sakti/features/authentication/data/datasources/auth_remote_data_source_impl.dart';
+import 'package:bhoomi_sakti/features/authentication/data/repositories/auth_repository_impl.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/get_current_user_usecase.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/login_usecase.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/signup_usecase.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/verify_otp_usecase.dart';
 
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_bloc.dart'; // Added SignupBloc import
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/otp_verification/verify_otp_bloc.dart'; // Added VerifyOtpBloc import
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_bloc.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_bloc.dart'; // Added SignupBloc import
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_bloc.dart'; // Added VerifyOtpBloc import
 
 // TODO: Replace with actual base URL from configuration
 const String _authBaseUrl = 'YOUR_BASE_URL_HERE/api';
@@ -61,11 +60,6 @@ final loginUsecaseProvider = Provider<LoginUsecase>((ref) {
 final verifyOtpUsecaseProvider = Provider<VerifyOtpUsecase>((ref) {
   final repository = ref.watch(authRepositoryProvider);
   return VerifyOtpUsecase(repository);
-});
-
-final refreshTokenUsecaseProvider = Provider<RefreshTokenUsecase>((ref) {
-  final repository = ref.watch(authRepositoryProvider);
-  return RefreshTokenUsecase(repository);
 });
 
 final getCurrentUserUsecaseProvider = Provider<GetCurrentUserUsecase>((ref) {

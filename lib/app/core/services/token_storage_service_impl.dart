@@ -47,16 +47,22 @@ class TokenStorageServiceImpl implements TokenStorageService {
   @override
   Future<void> initialize() async {
     try {
-      _accessToken = await _secureStorage.read(
-        key: TokenStorageKeys.accessToken,
-      );
-      _refreshToken = await _secureStorage.read(
-        key: TokenStorageKeys.refreshToken,
-      );
+      await Future.wait([
+        Future(() async {
+          _accessToken = await _secureStorage.read(
+            key: TokenStorageKeys.accessToken,
+          );
+        }),
+        Future(() async {
+          _refreshToken = await _secureStorage.read(
+            key: TokenStorageKeys.refreshToken,
+          );
+        }),
+      ]);
     } catch (e) {
       _accessToken = null;
       _refreshToken = null;
-      print('Error initializing tokens: $e');
+      throw TokenStorageException('Failed to initialize tokens: $e');
     }
   }
 
@@ -109,7 +115,7 @@ class TokenStorageServiceImpl implements TokenStorageService {
         _secureStorage.delete(key: TokenStorageKeys.refreshToken),
       ]);
     } catch (e) {
-      print('Error clearing tokens from storage: $e');
+      throw TokenStorageException('Failed to clear tokens: $e');
     }
   }
 

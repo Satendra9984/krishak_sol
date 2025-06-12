@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bhoomi_sakti/features/auth/auth_providers.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/otp_verification/verify_otp_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/otp_verification/verify_otp_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/otp_verification/verify_otp_state.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/login/login_state.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_event.dart';
-import 'package:bhoomi_sakti/features/auth/presentation/blocs/signup/signup_state.dart';
+import 'package:bhoomi_sakti/features/authentication/auth_providers.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_bloc.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_event.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_state.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_bloc.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_event.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_state.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_bloc.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_event.dart';
+import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_state.dart';
 import 'dart:async';
 import 'package:pinput/pinput.dart';
 

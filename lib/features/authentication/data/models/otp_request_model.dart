@@ -1,10 +1,7 @@
-import 'package:bhoomi_sakti/features/auth/domain/entities/otp_request_entity.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/entities/otp_request_entity.dart';
 
 class OtpRequestModel extends OtpRequestEntity {
-  const OtpRequestModel({
-    required super.mobileNumber,
-    super.name,
-  });
+  const OtpRequestModel({required super.mobileNumber, super.name});
 
   factory OtpRequestModel.fromEntity(OtpRequestEntity entity) {
     return OtpRequestModel(
@@ -14,9 +11,7 @@ class OtpRequestModel extends OtpRequestEntity {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = {
-      'mobileNumber': mobileNumber,
-    };
+    final Map<String, dynamic> data = {'mobileNumber': mobileNumber};
     if (name != null) {
       data['name'] = name;
     }

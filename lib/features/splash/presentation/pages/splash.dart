@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bhoomi_sakti/features/splash/presentation/providers/splash_providers.dart';
 import 'package:bhoomi_sakti/features/splash/presentation/blocs/splash_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/auth_providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -55,15 +54,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         bloc: ref.read(splashBlocProvider),
         listener: (context, state) {
           if (state is NavigateToOnboarding) {
-            context.go(AppRoutePaths.onboarding);
+            debugPrint('[splash]: NavigateToOnboarding');
+            // context.go(AppRoutePaths.onboarding);
           } else if (state is NavigateToAuth) {
-            context.go(AppRoutePaths.login);
+            debugPrint('[splash]: NavigateToAuth');
+            // context.go(AppRoutePaths.login);
           } else if (state is NavigateToHome) {
+            debugPrint('[splash]: NavigateToHome ${state.user}');
             // Set the user profile and tokens globally before navigating to home
-            ref
-                .read(authNotifierProvider.notifier)
-                .setAuthenticatedUser(state.user, state.tokens);
-            context.go(AppRoutePaths.home);
+            // ref
+            //     .read(authNotifierProvider.notifier)
+            //     .setAuthenticatedUser(state.user);
+            // context.go(AppRoutePaths.home);
           }
         },
         child: Center(

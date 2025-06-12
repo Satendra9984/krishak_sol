@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/tokens_model.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/user_model.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/otp_request_model.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/otp_verification_model.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/refresh_token_request_model.dart';
-import 'package:bhoomi_sakti/features/auth/data/models/auth_success_model.dart'; // Added import
+import 'package:bhoomi_sakti/common/models/tokens_model.dart';
+import 'package:bhoomi_sakti/common/models/user_model.dart';
+import 'package:bhoomi_sakti/features/authentication/data/models/otp_request_model.dart';
+import 'package:bhoomi_sakti/features/authentication/data/models/otp_verification_model.dart';
+import 'package:bhoomi_sakti/common/models/refresh_token_request_model.dart';
+import 'package:bhoomi_sakti/features/authentication/data/models/auth_success_model.dart'; // Added import
 
 abstract class AuthRemoteDataSource {
   Future<void> requestSignupOtp(OtpRequestModel signupRequest);

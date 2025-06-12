@@ -10,9 +10,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:bhoomi_sakti/app/core/network/api_client.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
-// TODO: Replace with actual base URL from configuration
-const String _appBaseUrl = 'YOUR_BASE_URL_HERE/api';
-
 final connectivityProvider = Provider<Connectivity>((ref) => Connectivity());
 
 // final isarInstanceProvider = Provider<Isar>((ref) {
@@ -40,7 +37,9 @@ final tokenStorageServiceProvider = Provider<TokenStorageService>((ref) {
 });
 
 final dioProvider = Provider<Dio>((ref) {
-  final dio = Dio(BaseOptions(baseUrl: _appBaseUrl));
+  final dio = Dio(
+    BaseOptions(baseUrl: ref.watch(flavorConfigProvider).apiBaseUrl),
+  );
 
   dio.options.connectTimeout = const Duration(seconds: 30);
   dio.options.receiveTimeout = const Duration(seconds: 30);
@@ -63,5 +62,8 @@ final dioProvider = Provider<Dio>((ref) {
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(baseUrl: _appBaseUrl, dio: ref.read(dioProvider));
+  return ApiClient(
+    baseUrl: ref.watch(flavorConfigProvider).apiBaseUrl,
+    dio: ref.read(dioProvider),
+  );
 });
