@@ -7,9 +7,8 @@ import 'package:bhoomi_sakti/app/core/providers/shared_preferences_provider.dart
 import 'package:bhoomi_sakti/features/splash/presentation/providers/splash_providers.dart';
 import 'package:bhoomi_sakti/features/splash/presentation/pages/splash.dart';
 import 'package:bhoomi_sakti/features/dashboard/presentation/pages/dashboard_screen.dart';
-import 'package:bhoomi_sakti/features/auth/auth_providers.dart'
-    as auth_providers;
-import 'package:bhoomi_sakti/features/auth/auth_routes.dart';
+
+import 'package:bhoomi_sakti/features/authentication/auth_routes.dart';
 import 'package:bhoomi_sakti/common/providers/auth_notifier/auth_state.dart';
 import 'package:bhoomi_sakti/features/onboarding/onboarding_providers.dart'
     as onboarding_providers;
@@ -62,7 +61,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ],
       ),
     ],
-    // errorBuilder: (context, state) => ErrorScreen(error: state.error), // TODO: Implement ErrorScreen
+    // errorBuilder: (context, state) => ErrorScreen(error: state.error),
+    //// TODO: Implement ErrorScreen
     redirect: (BuildContext context, GoRouterState state) async {
       final prefs = await ref.read(sharedPreferencesInitializerProvider.future);
       final bool isBoardingComplete = await OnboardingBloc.isOnboardingComplete(

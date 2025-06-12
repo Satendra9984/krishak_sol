@@ -1,15 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/domain/usecases/signup_usecase.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/signup_usecase.dart';
 import 'signup_event.dart';
 import 'signup_state.dart';
 
 class SignupBloc extends Bloc<SignupEvent, SignupState> {
   final SignupUsecase _signupUsecase;
 
-  SignupBloc({
-    required SignupUsecase signupUsecase,
-  })  : _signupUsecase = signupUsecase,
-        super(const SignupInitial()) {
+  SignupBloc({required SignupUsecase signupUsecase})
+    : _signupUsecase = signupUsecase,
+      super(const SignupInitial()) {
     on<SignupButtonPressed>(_onSignupButtonPressed);
     on<ResendSignupOtp>(_onResendSignupOtp);
   }
@@ -22,12 +21,9 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
     final result = await _signupUsecase.call(
       SignupParams(name: event.name, mobileNumber: event.mobileNumber),
     );
-    result.fold(
-      (failure) => emit(SignupFailure(failure: failure)),
-      (_) {
-        emit(const SignupOtpSentSuccess());
-      },
-    );
+    result.fold((failure) => emit(SignupFailure(failure: failure)), (_) {
+      emit(const SignupOtpSentSuccess());
+    });
   }
 
   Future<void> _onResendSignupOtp(

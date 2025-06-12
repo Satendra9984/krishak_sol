@@ -1,6 +1,7 @@
 import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 import 'package:bhoomi_sakti/features/splash/domain/entities/app_config.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
+import 'package:bhoomi_sakti/features/splash/domain/usecases/initialize_tokens.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 
@@ -17,11 +18,13 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   // final CheckVersion checkVersion;
   final CheckFirstLaunch checkFirstLaunch;
   final CheckAuthAndGetUser checkAuthAndGetUser;
+  final InitializeTokens initializeTokens;
 
   SplashBloc({
     // required this.checkVersion,
     required this.checkFirstLaunch,
     required this.checkAuthAndGetUser,
+    required this.initializeTokens,
   }) : super(SplashInitial()) {
     on<LoadSplashEvent>((event, emit) async {
       // emit(SplashLoading());
@@ -40,28 +43,34 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     Emitter<SplashState> emit,
   ) async {
     emit(SplashLoading());
+
+    await initializeTokens(NoParams());
+
     // Not first launch, check auth and get user
     final authResult = await checkAuthAndGetUser(NoParams());
-    authResult.fold((failure) => emit(NavigateToAuth()), (
-      userWithTokens,
-    ) async {
-      if (userWithTokens != null) {
-        emit(NavigateToHome(userWithTokens.user, userWithTokens.tokens));
-      } else {
-        final firstLaunchResult = await checkFirstLaunch(NoParams());
-        await firstLaunchResult.fold(
-          (failure) async {
-            emit(SplashFailure(failure));
-          },
-          (isFirstLaunch) async {
-            if (isFirstLaunch) {
-              emit(NavigateToOnboarding());
-              return;
-            }
-            emit(NavigateToAuth());
-          },
-        );
-      }
-    });
+    authResult.fold(
+      (failure) {
+        emit(NavigateToAuth());
+      },
+      (userWithTokens) async {
+        if (userWithTokens != null) {
+          emit(NavigateToHome(userWithTokens));
+        } else {
+          final firstLaunchResult = await checkFirstLaunch(NoParams());
+          await firstLaunchResult.fold(
+            (failure) async {
+              emit(SplashFailure(failure));
+            },
+            (isFirstLaunch) async {
+              if (isFirstLaunch) {
+                emit(NavigateToOnboarding());
+                return;
+              }
+              emit(NavigateToAuth());
+            },
+          );
+        }
+      },
+    );
   }
 }

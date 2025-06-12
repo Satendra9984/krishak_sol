@@ -29,13 +29,13 @@ class SplashFailure extends SplashState {
 
 /// Navigation states for routing from splash
 class NavigateToOnboarding extends SplashState {}
+
 class NavigateToAuth extends SplashState {}
 
 class NavigateToHome extends SplashState {
   final UserEntity user;
-  final TokensEntity tokens;
-  const NavigateToHome(this.user, this.tokens);
+  const NavigateToHome(this.user);
 
   @override
-  List<Object?> get props => [user, tokens];
+  List<Object?> get props => [user];
 }

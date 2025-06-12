@@ -1,8 +1,8 @@
+import 'package:bhoomi_sakti/app/core/services/token_storage_service_impl.dart';
+import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
+import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bhoomi_sakti/app/core/services/token_storage_service.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/tokens_entity.dart';
-import 'package:bhoomi_sakti/features/auth/domain/entities/user_entity.dart'; // Added import
-import 'package:bhoomi_sakti/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/get_current_user_usecase.dart';
 import 'package:bhoomi_sakti/app/core/usecases/usecase.dart'; // Import for NoParams
 import 'auth_state.dart';
 
@@ -37,7 +37,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           state = const Unauthenticated();
         },
         // Ensure tokens is not null here, as it was checked before calling _getCurrentUserUsecase
-        (user) => state = Authenticated(user: user, tokens: tokens),
+        (user) => state = Authenticated(user: user),
       );
     } else {
       state = const Unauthenticated();
@@ -48,7 +48,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = const AuthLoading();
     await _tokenStorageService.saveTokens(tokens);
     // User data is now passed directly, no need to fetch again via _getCurrentUserUsecase
-    state = Authenticated(user: user, tokens: tokens);
+    state = Authenticated(user: user);
   }
 
   Future<void> loggedOut() async {
@@ -58,7 +58,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// Sets the authenticated user from splash (when tokens are already valid).
-  void setAuthenticatedUser(UserEntity user, TokensEntity tokens) {
-    state = Authenticated(user: user, tokens: tokens);
+  void setAuthenticatedUser(UserEntity user) {
+    state = Authenticated(user: user);
   }
 }

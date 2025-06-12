@@ -17,13 +17,37 @@ class UserEntity extends Equatable {
     required this.active,
   });
 
+  // Factory constructor to create a UserEntity from a JSON map
+  factory UserEntity.fromJson(Map<String, dynamic> json) {
+    return UserEntity(
+      userId: json['userId'] as int,
+      name: json['name'] as String,
+      mobileNumber: json['mobileNumber'] as String,
+      role: json['role'] as String,
+      profilePictureUrl: json['profilePictureUrl'] as String?,
+      active: json['active'] as bool,
+    );
+  }
+
+  // Method to convert a UserEntity to a JSON map
+  Map<String, dynamic> toJson() {
+    return {
+      'userId': userId,
+      'name': name,
+      'mobileNumber': mobileNumber,
+      'role': role,
+      'profilePictureUrl': profilePictureUrl,
+      'active': active,
+    };
+  }
+
   @override
   List<Object?> get props => [
-        userId,
-        name,
-        mobileNumber,
-        role,
-        profilePictureUrl,
-        active,
-      ];
+    userId,
+    name,
+    mobileNumber,
+    role,
+    profilePictureUrl,
+    active,
+  ];
 }

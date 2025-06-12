@@ -1,15 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bhoomi_sakti/features/auth/domain/usecases/login_usecase.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/login_usecase.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginUsecase _loginUsecase;
 
-  LoginBloc({
-    required LoginUsecase loginUsecase,
-  })  : _loginUsecase = loginUsecase,
-        super(const LoginInitial()) {
+  LoginBloc({required LoginUsecase loginUsecase})
+    : _loginUsecase = loginUsecase,
+      super(const LoginInitial()) {
     on<LoginButtonPressed>(_onLoginButtonPressed);
     on<ResendLoginOtp>(_onResendLoginOtp);
   }

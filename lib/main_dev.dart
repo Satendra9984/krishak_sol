@@ -5,7 +5,8 @@ void main() {
   FlavorConfig.initialize(
     flavor: Flavor.dev,
     appName: "Bhoomi Shakti Dev",
-    apiBaseUrl: "https://dev-api.bhoomishakti.com/v1", // Example DEV API URL
+    // apiBaseUrl: "https://dev-api.bhoomishakti.com/v1", // Example DEV API URL
+    apiBaseUrl: "http://35.244.11.78:9101/api",
   );
   mainCommon(FlavorConfig.instance);
 }
