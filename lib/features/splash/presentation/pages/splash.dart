@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bhoomi_sakti/features/splash/presentation/providers/splash_providers.dart';
+import 'package:bhoomi_sakti/features/splash/splash_providers.dart';
 import 'package:bhoomi_sakti/features/splash/presentation/blocs/splash_bloc.dart';
 
-class SplashScreen extends ConsumerStatefulWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen>
+class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -35,7 +35,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     // --- Navigation logic moved to SplashBloc ---
     Future.microtask(() {
-      final splashBloc = ref.read(splashBlocProvider);
+      if (!mounted) return;
+      final splashBloc = context.read<SplashBloc>();
       splashBloc.add(AppStarted());
     });
   }
@@ -51,11 +52,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Scaffold(
       backgroundColor: Colors.green.shade50,
       body: BlocListener<SplashBloc, SplashState>(
-        bloc: ref.read(splashBlocProvider),
+        // bloc: context.read<SplashBloc>(),
         listener: (context, state) {
           if (state is NavigateToOnboarding) {
             debugPrint('[splash]: NavigateToOnboarding');
-            // context.go(AppRoutePaths.onboarding);
+            context.go(AppRoutePaths.onboarding);
           } else if (state is NavigateToAuth) {
             debugPrint('[splash]: NavigateToAuth');
             // context.go(AppRoutePaths.login);
@@ -74,7 +75,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset('assets/images/bhoomi_sakti_logo.png', height: 120),
+                // Image.asset('assets/images/bhoomi_sakti_logo.png', height: 120),
                 const SizedBox(height: 24),
                 Text(
                   'Bhoomi Shakti',

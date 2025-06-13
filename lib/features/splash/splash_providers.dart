@@ -12,7 +12,7 @@ import 'package:bhoomi_sakti/features/splash/presentation/blocs/splash_bloc.dart
 
 final _splashLocalDataSourceProvider = Provider<SplashLocalDataSource>(
   (ref) => SplashLocalDataSourceImpl(
-    sharedPreferences: ref.read(sharedPreferencesProvider),
+    sharedPreferences: ref.read(sharedPreferencesSyncProvider),
   ),
 );
 final _versionRemoteDataSourceProvider = Provider<SplashRemoteDataSource>(

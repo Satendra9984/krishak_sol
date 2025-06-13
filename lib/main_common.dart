@@ -23,7 +23,7 @@ Future<void> mainCommon(FlavorConfig flavorConfig) async {
   runApp(
     ProviderScope(
       overrides: [
-        sharedPreferencesProvider.overrideWithValue(prefs),
+        sharedPreferencesProvider.overrideWith((ref) => prefs),
         flavorConfigProvider.overrideWithValue(flavorConfig),
       ],
       child: const BhoomiSaktiApp(),

@@ -1,8 +1,9 @@
+import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
+import 'package:bhoomi_sakti/features/onboarding/presentation/widdgets/onboarding_screen_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bhoomi_sakti/features/onboarding/onboarding_providers.dart';
 import 'package:bhoomi_sakti/features/onboarding/presentation/blocs/onboarding_bloc/onboarding_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class OnboardingItemData {
   final String imagePath;
@@ -39,20 +40,40 @@ final List<OnboardingItemData> onboardingItemsList = [
   ),
 ];
 
-class OnboardingPage extends ConsumerWidget {
-  const OnboardingPage({super.key});
+class OnboardingPage extends StatefulWidget {
+  OnboardingPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final pageController = PageController();
-    final onboardingBloc = ref.watch(onboardingBlocProvider);
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  final pageController = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Trigger initial state
+    context.read<OnboardingBloc>().add(OnboardingStarted());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final onboardingBloc = ref.watch(onboardingBlocProvider);
 
     return Scaffold(
       body: BlocListener<OnboardingBloc, OnboardingState>(
-        bloc: onboardingBloc,
+        // bloc: onboardingBloc,
         listener: (context, state) {
+          if (state is OnboardingInProgress) {
+            debugPrint(
+              '[onboarding_page]: Pagee changed to ${state.currentPage}',
+            );
+          }
           if (state is OnboardingCompleted) {
             // Navigation is handled by the router's redirect logic
+            debugPrint('[onboarding_page]: Onboarding completed');
+            context.go(AppRoutePaths.signUp);
           }
         },
         child: Stack(
@@ -61,7 +82,9 @@ class OnboardingPage extends ConsumerWidget {
               controller: pageController,
               itemCount: onboardingItemsList.length,
               onPageChanged: (index) {
-                onboardingBloc.add(OnboardingPageChanged(index));
+                context.read<OnboardingBloc>().add(
+                  OnboardingPageChanged(index),
+                );
               },
               itemBuilder: (context, index) {
                 final item = onboardingItemsList[index];
@@ -77,37 +100,43 @@ class OnboardingPage extends ConsumerWidget {
               left: 20.0,
               right: 20.0,
               child: BlocBuilder<OnboardingBloc, OnboardingState>(
-                bloc: onboardingBloc,
+                // bloc: onboardingBloc,
                 builder: (context, state) {
                   int currentPage = 0;
                   if (state is OnboardingInProgress) {
                     currentPage = state.currentPage;
                   }
 
+                  debugPrint('[onboarding_page]: Current page $currentPage');
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
                         onPressed: () {
-                          onboardingBloc.add(OnboardingSkip());
+                          context.read<OnboardingBloc>().add(OnboardingSkip());
                         },
                         child: const Text('SKIP'),
                       ),
                       Row(
-                        children: List.generate(
-                          onboardingItemsList.length,
-                          (index) => Container(
+                        children: List.generate(onboardingItemsList.length, (
+                          index,
+                        ) {
+                          // debugPrint(
+                          //   '[onboarding_page.dart]: Current page $currentPage index $index',
+                          // );
+                          return Container(
                             margin: const EdgeInsets.symmetric(horizontal: 4.0),
                             width: 8.0,
                             height: 8.0,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: currentPage == index
-                                  ? Theme.of(context).primaryColor
-                                  : Colors.grey[300],
+                              color:
+                                  currentPage == index
+                                      ? Theme.of(context).primaryColor
+                                      : Colors.grey[300],
                             ),
-                          ),
-                        ),
+                          );
+                        }),
                       ),
                       TextButton(
                         onPressed: () {
@@ -117,7 +146,9 @@ class OnboardingPage extends ConsumerWidget {
                               curve: Curves.easeIn,
                             );
                           } else {
-                            onboardingBloc.add(OnboardingComplete());
+                            context.read<OnboardingBloc>().add(
+                              OnboardingComplete(),
+                            );
                           }
                         },
                         child: Text(
@@ -133,50 +164,6 @@ class OnboardingPage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class OnboardingScreenItem extends StatelessWidget {
-  final IconData iconData;
-  final String title;
-  final String subtitle;
-
-  const OnboardingScreenItem({
-    super.key,
-    required this.iconData,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            iconData,
-            size: 120,
-            color: Theme.of(context).primaryColor,
-          ),
-          const SizedBox(height: 32.0),
-          Text(
-            title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16.0),
-          Text(
-            subtitle,
-            style: Theme.of(context).textTheme.bodyLarge,
-            textAlign: TextAlign.center,
-          ),
-        ],
       ),
     );
   }

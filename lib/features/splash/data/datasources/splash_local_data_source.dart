@@ -18,6 +18,6 @@ class SplashLocalDataSourceImpl implements SplashLocalDataSource {
 
   @override
   Future<void> setFirstLaunchComplete() async {
-    await sharedPreferences.setBool(_firstLaunchKey, false);
+    await sharedPreferences.setBool(_firstLaunchKey, true);
   }
 }

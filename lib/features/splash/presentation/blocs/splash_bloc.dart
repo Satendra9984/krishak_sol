@@ -41,35 +41,45 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
     SplashEvent event,
     Emitter<SplashState> emit,
   ) async {
+    //Show loading state
     emit(SplashLoading());
 
+    // Initialize tokens (async operation)
     await initializeTokens(NoParams());
 
-    // Not first launch, check auth and get user
+    // Check authentication and get user data
     final authResult = await checkAuthAndGetUser(NoParams());
-    authResult.fold(
-      (failure) {
+
+    // Handle authentication failure case
+    // Instead of using fold's left callback, we check directly
+    if (authResult.isLeft()) {
+      emit(NavigateToAuth());
+      return; // Exit early - no need to continue
+    }
+
+    // Extract user data from the successful result
+    // getOrElse() safely extracts the value or returns null
+    final userWithTokens = authResult.getOrElse((_) => null);
+
+    // If user exists, navigate to home
+    if (userWithTokens != null) {
+      emit(NavigateToHome(userWithTokens));
+      return; // Exit early - we're done
+    }
+
+    // User doesn't exist, check if it's first launch
+    final firstLaunchResult = await checkFirstLaunch(NoParams());
+
+    // Handle first launch check result
+    // This fold is safe because both callbacks are synchronous
+    firstLaunchResult.fold((failure) => emit(SplashFailure(failure)), (
+      isFirstLaunch,
+    ) {
+      if (isFirstLaunch) {
+        emit(NavigateToOnboarding());
+      } else {
         emit(NavigateToAuth());
-      },
-      (userWithTokens) async {
-        if (userWithTokens != null) {
-          emit(NavigateToHome(userWithTokens));
-        } else {
-          final firstLaunchResult = await checkFirstLaunch(NoParams());
-          await firstLaunchResult.fold(
-            (failure) async {
-              emit(SplashFailure(failure));
-            },
-            (isFirstLaunch) async {
-              if (isFirstLaunch) {
-                emit(NavigateToOnboarding());
-                return;
-              }
-              emit(NavigateToAuth());
-            },
-          );
-        }
-      },
-    );
+      }
+    });
   }
 }

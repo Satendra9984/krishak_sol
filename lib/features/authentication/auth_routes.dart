@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bhoomi_sakti/features/authentication/auth_providers.dart'
-    as auth_providers;
+import 'package:bhoomi_sakti/features/authentication/auth_providers.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/pages/login_page.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/pages/signup_page.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/pages/otp_verification_page.dart';
@@ -14,19 +13,19 @@ import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
 List<GoRoute> getAuthRoutes(Ref ref) => [
   GoRoute(
     path: AppRoutePaths.login,
-    name: AppRoutePaths.login,
+    // name: AppRoutePaths.login,
     builder:
         (context, state) => BlocProvider.value(
-          value: ref.read(auth_providers.loginBlocProvider),
+          value: ref.read(loginBlocProvider),
           child: const LoginPage(),
         ),
   ),
   GoRoute(
     path: AppRoutePaths.signUp,
-    name: AppRoutePaths.signUp,
+    // name: AppRoutePaths.signUp,
     builder:
         (context, state) => BlocProvider.value(
-          value: ref.read(auth_providers.signupBlocProvider),
+          value: ref.read(signupBlocProvider),
           child: const SignupPage(),
         ),
   ),

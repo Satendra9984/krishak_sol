@@ -1,3 +1,4 @@
+import 'package:bhoomi_sakti/app/core/network/api_client.dart';
 import 'package:dio/dio.dart';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
 import 'package:bhoomi_sakti/common/models/tokens_model.dart';
@@ -19,18 +20,16 @@ abstract class AuthRemoteDataSource {
   Future<UserModel> getCurrentUser();
 }
 
-const String _baseUrl = 'YOUR_BASE_URL_HERE';
-
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final Dio dio;
+  final ApiClient apiClient;
 
-  AuthRemoteDataSourceImpl({required this.dio});
+  AuthRemoteDataSourceImpl({required this.apiClient});
 
   @override
   Future<void> requestSignupOtp(OtpRequestModel signupRequest) async {
     try {
-      final response = await dio.post(
-        '$_baseUrl/auth/request-signup-otp', // Placeholder endpoint
+      final response = await apiClient.post(
+        '/auth/request-signup-otp', // Placeholder endpoint
         data: signupRequest.toJson(),
       );
       if (response.statusCode != 200 &&
@@ -54,8 +53,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> requestLoginOtp(OtpRequestModel loginRequest) async {
     try {
-      final response = await dio.post(
-        '$_baseUrl/auth/request-login-otp', // Placeholder endpoint
+      final response = await apiClient.post(
+        '/auth/request-login-otp', // Placeholder endpoint
         data:
             loginRequest
                 .toJson(), // Assuming name field is optional/not present for login OTP
@@ -83,8 +82,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     OtpVerificationModel otpVerification,
   ) async {
     try {
-      final response = await dio.post(
-        '$_baseUrl/auth/verify-otp',
+      final response = await apiClient.post(
+        '/auth/verify-otp',
         data: otpVerification.toJson(),
       );
       if (response.statusCode == 200 && response.data != null) {
@@ -110,8 +109,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     RefreshTokenRequestModel refreshTokenRequest,
   ) async {
     try {
-      final response = await dio.post(
-        '$_baseUrl/auth/refresh',
+      final response = await apiClient.post(
+        '/auth/refresh',
         data: refreshTokenRequest.toJson(),
       );
       if (response.statusCode == 200 && response.data != null) {
@@ -131,7 +130,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel> getCurrentUser() async {
     try {
-      final response = await dio.get('$_baseUrl/user/me');
+      final response = await apiClient.get('/user/me');
       if (response.statusCode == 200 && response.data != null) {
         return UserModel.fromJson(response.data as Map<String, dynamic>);
       } else {
