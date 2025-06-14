@@ -1,3 +1,6 @@
+import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
+import 'package:bhoomi_sakti/common/app_common_providers.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/entities/otp_verification_type.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,16 +8,11 @@ import 'package:bhoomi_sakti/features/authentication/auth_providers.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_bloc.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_event.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_state.dart';
-import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_bloc.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_event.dart';
-import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_state.dart';
-import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_bloc.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_event.dart';
-import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_state.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:async';
 import 'package:pinput/pinput.dart';
-
-enum OtpFlowType { login, signup }
 
 class OtpVerificationPage extends ConsumerStatefulWidget {
   final String mobileNumber;
@@ -36,7 +34,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
   final _otpController = TextEditingController();
 
   Timer? _timer;
-  int _resendTimerSeconds = 30;
+  final ValueNotifier<int> _resendTimerSeconds = ValueNotifier<int>(60);
   bool _canResendOtp = false;
 
   @override
@@ -47,13 +45,13 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
   void startResendTimer() {
     _canResendOtp = false;
-    _resendTimerSeconds = 30; // Reset timer duration
+    _resendTimerSeconds.value = 60; // Reset timer duration
     _timer?.cancel(); // Cancel any existing timer
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
-          if (_resendTimerSeconds > 0) {
-            _resendTimerSeconds--;
+          if (_resendTimerSeconds.value > 0) {
+            _resendTimerSeconds.value--;
           } else {
             _timer?.cancel();
             _canResendOtp = true;
@@ -103,126 +101,209 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
   @override
   Widget build(BuildContext context) {
+    const gap = 16.0;
+    // final size = MediaQuery.of(context).size;
+    final theme = Theme.of(context);
+    final colorTheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Verify OTP')),
-      body: MultiBlocListener(
-        listeners: [
-          BlocListener<VerifyOtpBloc, VerifyOtpState>(
-            bloc: ref.watch(verifyOtpBlocProvider),
-            listener: (context, state) {
-              if (state is VerifyOtpFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'OTP Verification Failed: ${state.failure.message}',
+      // appBar: AppBar(),
+      backgroundColor: colorTheme.surface,
+      body: BlocConsumer<VerifyOtpBloc, VerifyOtpState>(
+        bloc: ref.watch(verifyOtpBlocProvider),
+        listener: (context, state) {
+          if (state is VerifyOtpFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'OTP Verification Failed: ${state.failure.message}',
+                ),
+              ),
+            );
+          } else if (state is VerifyOtpSuccess) {
+            // Check if it's a resend scenario, maybe by a flag if needed
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('OTP Resent Successfully!')),
+            );
+
+            ref
+                .read(authNotifierProvider.notifier)
+                .setAuthenticatedUser(state.authSuccessEntity.user);
+
+            context.go(AppRoutePaths.home);
+          }
+          // VerifyOtpSuccess is handled by AuthNotifier & GoRouter redirect
+        },
+        builder: (context, state) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Verify Account With OTP',
+                      style: textTheme.headlineMedium,
                     ),
-                  ),
-                );
-              }
-              // VerifyOtpSuccess is handled by AuthNotifier & GoRouter redirect
-            },
-          ),
-          BlocListener<LoginBloc, LoginState>(
-            bloc: ref.watch(loginBlocProvider),
-            listener: (context, state) {
-              if (state is LoginOtpSentSuccess) {
-                // Check if it's a resend scenario, maybe by a flag if needed
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('OTP Resent Successfully!')),
-                );
-              } else if (state is LoginFailure) {
-                // Differentiate from initial send failure if necessary
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Failed to Resend OTP: ${state.failure.message}',
+
+                    const SizedBox(height: gap),
+                    Text(
+                      'Enter 6 digit OTP sent to +91-${widget.mobileNumber}',
+                      style: textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                );
-              }
-            },
-          ),
-          BlocListener<SignupBloc, SignupState>(
-            bloc: ref.watch(signupBlocProvider),
-            listener: (context, state) {
-              if (state is SignupOtpSentSuccess) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('OTP Resent Successfully!')),
-                );
-              } else if (state is SignupFailure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Failed to Resend OTP: ${state.failure.message}',
+                    const SizedBox(height: gap * 1.25),
+                    Pinput(
+                      controller: _otpController,
+                      length: 6,
+                      autofocus: true,
+                      defaultPinTheme: PinTheme(
+                        width: 48,
+                        height: 56,
+                        textStyle: textTheme.titleLarge?.copyWith(
+                          color: colorTheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: colorTheme.primary.withValues(
+                              alpha: (0.5 * 255),
+                            ),
+                            width: 1.5,
+                          ),
+                        ),
+                      ),
+                      focusedPinTheme: PinTheme(
+                        width: 52,
+                        height: 60,
+                        textStyle: textTheme.titleLarge?.copyWith(
+                          color: colorTheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorTheme.primary.withValues(
+                            alpha: (0.08 * 255),
+                          ),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: colorTheme.primary,
+                            width: 2.2,
+                          ),
+                        ),
+                      ),
+                      errorPinTheme: PinTheme(
+                        width: 48,
+                        height: 56,
+                        textStyle: textTheme.titleLarge?.copyWith(
+                          color: colorTheme.error,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: BoxDecoration(
+                          color: colorTheme.error.withValues(
+                            alpha: (0.08 * 255),
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: colorTheme.error, width: 2),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter the OTP';
+                        }
+                        if (value.length != 6) {
+                          return 'OTP must be 6 digits';
+                        }
+                        return null;
+                      },
                     ),
-                  ),
-                );
-              }
-            },
-          ),
-        ],
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Enter OTP sent to ${widget.mobileNumber}'),
-                  const SizedBox(height: 20),
-                  Pinput(
-                    controller: _otpController,
-                    length: 6,
-                    autofocus: true,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the OTP';
-                      }
-                      if (value.length != 6) {
-                        return 'OTP must be 6 digits';
-                      }
-                      return null;
-                    },
-                    // You can customize the appearance further using `defaultPinTheme`, `focusedPinTheme`, etc.
-                    // Example defaultPinTheme:
-                    // defaultPinTheme: PinTheme(
-                    //   width: 56,
-                    //   height: 56,
-                    //   textStyle: TextStyle(fontSize: 20, color: Color.fromRGBO(30, 60, 87, 1), fontWeight: FontWeight.w600),
-                    //   decoration: BoxDecoration(
-                    //     border: Border.all(color: Color.fromRGBO(234, 239, 243, 1)),
-                    //     borderRadius: BorderRadius.circular(20),
-                    //   ),
-                    // ),
-                  ),
-                  const SizedBox(height: 24),
-                  BlocBuilder<VerifyOtpBloc, VerifyOtpState>(
-                    bloc: ref.watch(verifyOtpBlocProvider),
-                    builder: (context, state) {
-                      if (state is VerifyOtpLoading) {
-                        return const CircularProgressIndicator();
-                      }
-                      return ElevatedButton(
-                        onPressed: _onVerifyOtpPressed,
-                        child: const Text('Verify OTP'),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextButton(
-                    onPressed: _canResendOtp ? _onResendOtpPressed : null,
-                    child: Text(
-                      _canResendOtp
-                          ? 'Resend OTP'
-                          : 'Resend OTP in $_resendTimerSeconds s',
+                    const SizedBox(height: gap * 1.25),
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: Column(
+                        children: [
+                          BlocBuilder<VerifyOtpBloc, VerifyOtpState>(
+                            bloc: ref.watch(verifyOtpBlocProvider),
+                            builder: (context, state) {
+                              if (state is VerifyOtpLoading) {
+                                return const CircularProgressIndicator();
+                              }
+                              return SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: _onVerifyOtpPressed,
+                                  child: Text(
+                                    'Verify OTP',
+                                    style: textTheme.bodyMedium?.copyWith(
+                                      color: colorTheme.onPrimary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: gap * 1.25),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                onPressed:
+                                    _canResendOtp ? _onResendOtpPressed : null,
+                                child: ValueListenableBuilder(
+                                  valueListenable: _resendTimerSeconds,
+                                  builder: (context, value, child) {
+                                    return Text(
+                                      _canResendOtp
+                                          ? 'Resend OTP'
+                                          : 'Resend OTP in $value s',
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        // decoration: TextDecoration.underline,
+                                        color: colorTheme.onSurface,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textDirection: TextDirection.ltr,
+                                    );
+                                  },
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  context.pop();
+                                },
+                                child: ValueListenableBuilder(
+                                  valueListenable: _resendTimerSeconds,
+                                  builder: (context, value, child) {
+                                    return Text(
+                                      'Back',
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        // decoration: TextDecoration.underline,
+                                        color: colorTheme.onSurface,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textDirection: TextDirection.ltr,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+          // VerifyOtpSuccess is handled by AuthNotifier & GoRouter redirect
+        },
       ),
     );
   }

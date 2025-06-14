@@ -1,21 +1,25 @@
+import 'package:bhoomi_sakti/app/core/services/token_storage_service_impl.dart';
+import 'package:bhoomi_sakti/common/auth/data/datasource/user_profile_datasource.dart';
 import 'package:bhoomi_sakti/features/authentication/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
-import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
 import 'package:bhoomi_sakti/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:bhoomi_sakti/features/authentication/data/models/otp_request_model.dart';
 import 'package:bhoomi_sakti/features/authentication/data/models/otp_verification_model.dart';
-import 'package:bhoomi_sakti/features/authentication/data/models/auth_success_model.dart'; // Added import
 import 'package:bhoomi_sakti/features/authentication/domain/entities/auth_success_entity.dart'; // Explicit import for AuthSuccessEntity
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
+  final UserProfileRemoteDatasource userProfileRemoteDatasource;
   // final NetworkInfo networkInfo; // Optional: for checking internet connectivity
+  final TokenStorageService tokenStorageService;
 
   AuthRepositoryImpl({
     required this.remoteDataSource,
     // required this.networkInfo,
+    required this.tokenStorageService,
+    required this.userProfileRemoteDatasource,
   });
 
   @override
@@ -64,21 +68,21 @@ class AuthRepositoryImpl implements AuthRepository {
         mobileNumber: mobileNumber,
         otp: otp,
       );
-      final AuthSuccessModel authSuccessModel = await remoteDataSource
-          .verifyOtp(otpVerification);
-      return Right(authSuccessModel.toEntity());
-    } on AppException catch (e) {
-      return Left(ExceptionFailure(e));
-    } catch (e) {
-      return Left(ExceptionFailure(UnexpectedException(message: e.toString())));
-    }
-  }
+      final authTokens = await remoteDataSource.verifyOtp(otpVerification);
 
-  @override
-  Future<Either<Failure, UserEntity>> getCurrentUser() async {
-    try {
-      final userModel = await remoteDataSource.getCurrentUser();
-      return Right(userModel.toEntity());
+      if (authTokens == null) {
+        return Left(AuthFailure('Failed to verify OTP'));
+      }
+      await tokenStorageService.storeTokens(authTokens);
+
+      final user = await userProfileRemoteDatasource.getCurrentUser();
+
+      final authSuccessEntity = AuthSuccessEntity(
+        user: user.toEntity(),
+        tokens: authTokens,
+      );
+
+      return Right(authSuccessEntity);
     } on AppException catch (e) {
       return Left(ExceptionFailure(e));
     } catch (e) {

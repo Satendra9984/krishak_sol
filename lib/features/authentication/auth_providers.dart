@@ -22,7 +22,11 @@ final _authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
 final _authRepositoryProvider = Provider<AuthRepository>((ref) {
   final remoteDataSource = ref.watch(_authRemoteDataSourceProvider);
   // final networkInfo = ref.watch(networkInfoProvider); // If network info is needed
-  return AuthRepositoryImpl(remoteDataSource: remoteDataSource);
+  return AuthRepositoryImpl(
+    remoteDataSource: remoteDataSource,
+    userProfileRemoteDatasource: ref.watch(userProfileRemoteDatasourceProvider),
+    tokenStorageService: ref.watch(tokenStorageServiceProvider),
+  );
 });
 
 // Usecase Providers

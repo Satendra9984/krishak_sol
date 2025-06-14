@@ -5,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:bhoomi_sakti/features/splash/splash_providers.dart';
 import 'package:bhoomi_sakti/features/splash/presentation/blocs/splash_bloc.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
@@ -49,24 +48,26 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorTheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.green.shade50,
+      backgroundColor: colorTheme.surface,
       body: BlocListener<SplashBloc, SplashState>(
-        // bloc: context.read<SplashBloc>(),
         listener: (context, state) {
           if (state is NavigateToOnboarding) {
-            debugPrint('[splash]: NavigateToOnboarding');
+            // debugPrint('[splash]: NavigateToOnboarding');
             context.go(AppRoutePaths.onboarding);
           } else if (state is NavigateToAuth) {
             debugPrint('[splash]: NavigateToAuth');
-            // context.go(AppRoutePaths.login);
+            context.go(AppRoutePaths.login);
           } else if (state is NavigateToHome) {
             debugPrint('[splash]: NavigateToHome ${state.user}');
             // Set the user profile and tokens globally before navigating to home
-            // ref
-            //     .read(authNotifierProvider.notifier)
-            //     .setAuthenticatedUser(state.user);
-            // context.go(AppRoutePaths.home);
+            ref
+                .read(authNotifierProvider.notifier)
+                .setAuthenticatedUser(state.user);
+            context.go(AppRoutePaths.home);
           }
         },
         child: Center(
@@ -80,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
                 Text(
                   'Bhoomi Shakti',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Colors.green.shade800,
+                    color: colorTheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -89,7 +90,7 @@ class _SplashScreenState extends State<SplashScreen>
                   'Empowering Farmers, Agents & Admins',
                   style: Theme.of(
                     context,
-                  ).textTheme.bodyLarge?.copyWith(color: Colors.green.shade700),
+                  ).textTheme.bodyLarge?.copyWith(color: colorTheme.primary),
                 ),
                 const SizedBox(height: 32),
                 const CircularProgressIndicator(),

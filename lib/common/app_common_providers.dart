@@ -1,9 +1,27 @@
 import 'package:bhoomi_sakti/app/core/providers/core_providers.dart';
+import 'package:bhoomi_sakti/common/auth/data/datasource/user_profile_datasource.dart';
+import 'package:bhoomi_sakti/common/auth/data/repository/user_profile_repository_impl.dart';
+import 'package:bhoomi_sakti/common/auth/usecases/get_current_user_usecase.dart';
 import 'package:bhoomi_sakti/common/providers/auth_notifier/auth_notifier.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/common/providers/auth_notifier/auth_state.dart';
 import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
-import 'package:bhoomi_sakti/features/authentication/auth_providers.dart';
+
+final userProfileRemoteDatasourceProvider = Provider((ref) {
+  return UserProfileRemoteDataSourceImpl(
+    apiClient: ref.watch(apiClientProvider),
+  );
+});
+
+final userProfileRepositoryProvider = Provider((ref) {
+  return UserProfileRepositoryImpl(
+    remoteDataSource: ref.watch(userProfileRemoteDatasourceProvider),
+  );
+});
+
+final getCurrentUserUsecaseProvider = Provider((ref) {
+  return GetCurrentUserUsecase(ref.watch(userProfileRepositoryProvider));
+});
 
 // AuthNotifier Provider
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((
@@ -15,7 +33,6 @@ final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((
   return AuthNotifier(
     getCurrentUserUsecase: getCurrentUserUsecase,
     tokenStorageService: tokenStorageService,
-    // refreshTokenUsecase: refreshTokenUsecase,
   );
 });
 

@@ -1,9 +1,8 @@
 import 'package:bhoomi_sakti/app/core/services/token_storage_service_impl.dart';
 import 'package:bhoomi_sakti/common/auth/entities/tokens_entity.dart';
 import 'package:bhoomi_sakti/common/auth/entities/user_entity.dart';
+import 'package:bhoomi_sakti/common/auth/usecases/get_current_user_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:bhoomi_sakti/features/authentication/domain/usecases/get_current_user_usecase.dart';
-import 'package:bhoomi_sakti/app/core/usecases/usecase.dart'; // Import for NoParams
 import 'auth_state.dart';
 
 class AuthNotifier extends StateNotifier<AuthState> {

@@ -28,9 +28,6 @@ class VerifyOtpBloc extends Bloc<VerifyOtpEvent, VerifyOtpState> {
     result.fold((failure) => emit(VerifyOtpFailure(failure: failure)), (
       authSuccess,
     ) {
-      // Notify AuthNotifier about successful login and token/user data
-      // Assuming AuthNotifier has a method like loggedIn(user, tokens)
-      // This part depends on AuthNotifier's specific API
       _authNotifier.processAuthSuccess(authSuccess.user, authSuccess.tokens);
       emit(VerifyOtpSuccess(authSuccessEntity: authSuccess));
     });

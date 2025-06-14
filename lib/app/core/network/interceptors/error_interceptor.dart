@@ -59,7 +59,7 @@ class ErrorInterceptor extends Interceptor {
         appEx = NoInternetException();
         break;
       case DioExceptionType.unknown:
-        appEx = NoInternetException();
+        appEx = UnexpectedException();
         break;
     }
 
