@@ -89,4 +89,19 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ExceptionFailure(UnexpectedException(message: e.toString())));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> resendOtp({
+    required String mobileNumber,
+  }) async {
+    try {
+      final otpRequest = OtpRequestModel(mobileNumber: mobileNumber);
+      await remoteDataSource.resendOtp(otpRequest);
+      return const Right(null);
+    } on AppException catch (e) {
+      return Left(ExceptionFailure(e));
+    } catch (e) {
+      return Left(ExceptionFailure(UnexpectedException(message: e.toString())));
+    }
+  }
 }

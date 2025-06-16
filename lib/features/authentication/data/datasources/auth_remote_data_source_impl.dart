@@ -9,6 +9,8 @@ abstract class AuthRemoteDataSource {
   Future<void> requestSignupOtp(OtpRequestModel signupRequest);
   Future<void> requestLoginOtp(OtpRequestModel loginRequest);
   Future<TokensEntity?> verifyOtp(OtpVerificationModel otpVerification);
+
+  Future<void> resendOtp(OtpRequestModel otpRequest);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -63,6 +65,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (e.error is AppException) throw e.error as AppException;
       throw ServerException(
         message: e.message ?? 'Network error during login OTP request',
+        data: e.response?.data,
+      );
+    }
+  }
+
+  @override
+  Future<void> resendOtp(OtpRequestModel otpRequest) async {
+    try {
+      final response = await apiClient.post(
+        '/auth/resend-otp',
+        data: otpRequest.toJson(),
+      );
+      if (response.statusCode != 200 &&
+          response.statusCode != 201 &&
+          response.statusCode != 204) {
+        throw ServerException(
+          message: 'Resending OTP failed',
+          data: response.data,
+        );
+      }
+      // Success, no body expected
+    } on DioException catch (e) {
+      if (e.error is AppException) throw e.error as AppException;
+      throw ServerException(
+        message: e.message ?? 'Network error during OTP resend',
         data: e.response?.data,
       );
     }

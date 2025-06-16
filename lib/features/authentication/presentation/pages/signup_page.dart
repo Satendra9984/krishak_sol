@@ -23,11 +23,13 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _mobileController = TextEditingController();
+  final _locationController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _mobileController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -46,7 +48,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    const gap = 16.0;
+    const gap = 12.0;
     // final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     final colorTheme = theme.colorScheme;
@@ -85,18 +87,18 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    "Let's Revolutionize Agriculture!",
+                    "Let's get started!",
                     style: textTheme.headlineMedium,
                     maxLines: 2,
                     softWrap: true,
                   ),
-                  const SizedBox(height: gap),
+                  const SizedBox(height: gap / 3),
 
                   Text(
-                    'Let\'s Begin by Creating your Account',
+                    'Sign up and boost your production',
                     style: textTheme.bodyMedium,
                   ),
-                  const SizedBox(height: gap * 1.25),
+                  const SizedBox(height: gap * 2),
 
                   CustomTextFormField(
                     controller: _nameController,
@@ -107,7 +109,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       }
                       return null;
                     },
-                    prefixIcon: Icon(Icons.person_outline_rounded),
+
+                    hintText: 'Enter your name',
+                    // prefixIcon: Icon(Icons.person_outline_rounded),
                   ),
                   const SizedBox(height: gap),
 
@@ -124,9 +128,24 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                       }
                       return null;
                     },
-                    prefixIcon: Icon(Icons.phone_outlined),
+                    hintText: '+91-1234567890',
+                    // prefixIcon: Icon(Icons.phone_outlined),
                   ),
-                  const SizedBox(height: gap * 1.5),
+
+                  CustomTextFormField(
+                    controller: _locationController,
+                    labelText: 'Location',
+                    validator: (value) {
+                      // if (value == null || value.isEmpty) {
+                      //   return 'Please enter your location';
+                      // }
+                      return null;
+                    },
+
+                    hintText: 'Enter your location',
+                    // prefixIcon: Icon(Icons.person_outline_rounded),
+                  ),
+                  const SizedBox(height: gap * 3),
 
                   BlocBuilder<SignupBloc, SignupState>(
                     bloc: ref.watch(signupBlocProvider),
@@ -146,8 +165,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                 onPressed: _onSignupPressed,
                                 label: Text(
                                   'Sign Up',
-                                  style: textTheme.titleMedium?.copyWith(
+                                  style: textTheme.bodyLarge?.copyWith(
                                     color: colorTheme.onPrimary,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 icon:
@@ -163,17 +183,45 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                         : const SizedBox.shrink(),
                               ),
                             ),
-                            const SizedBox(height: gap * 1.25),
+                            const SizedBox(height: gap * 2),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(child: SizedBox.shrink()),
+                                Expanded(
+                                  child: Divider(color: Color(0xffe1e1e1)),
+                                ),
+                                Text(
+                                  '  Or  ',
+                                  style: textTheme.bodyLarge?.copyWith(
+                                    color: Color(0xffe1e1e1),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Divider(color: Color(0xffe1e1e1)),
+                                ),
+                                Expanded(child: SizedBox.shrink()),
+                              ],
+                            ),
+
+                            const SizedBox(height: gap * 2),
                             RichText(
                               text: TextSpan(
                                 text: "Already have an account? ",
-                                style: textTheme.titleMedium?.copyWith(
-                                  color: Colors.grey.shade600,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: Colors.grey.shade500,
                                 ),
                                 children: <TextSpan>[
                                   TextSpan(
                                     text: 'Login',
-                                    style: textTheme.titleMedium,
+                                    style: textTheme.bodyMedium?.copyWith(
+                                      color: colorTheme.primary,
+                                      decoration: TextDecoration.underline,
+                                      decorationStyle:
+                                          TextDecorationStyle.solid,
+                                      decorationColor: colorTheme.primary,
+                                    ),
                                     recognizer:
                                         TapGestureRecognizer()
                                           ..onTap = () {

@@ -7,11 +7,13 @@ abstract class AuthRepository {
     required String name,
     required String mobileNumber,
   });
-  
+
   Future<Either<Failure, void>> requestLoginOtp({required String mobileNumber});
-  
+
   Future<Either<Failure, AuthSuccessEntity>> verifyOtp({
     required String mobileNumber,
     required String otp,
   });
+
+  Future<Either<Failure, void>> resendOtp({required String mobileNumber});
 }

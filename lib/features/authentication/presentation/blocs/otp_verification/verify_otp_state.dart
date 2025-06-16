@@ -34,3 +34,20 @@ class VerifyOtpFailure extends VerifyOtpState {
   @override
   List<Object?> get props => [failure];
 }
+
+class VerifyOtpResendLoading extends VerifyOtpState {
+  const VerifyOtpResendLoading();
+}
+
+class VerifyOtpResendSuccess extends VerifyOtpState {
+  const VerifyOtpResendSuccess();
+}
+
+class VerifyOtpResendFailure extends VerifyOtpState {
+  final Failure failure;
+
+  const VerifyOtpResendFailure({required this.failure});
+
+  @override
+  List<Object?> get props => [failure];
+}

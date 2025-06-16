@@ -1,5 +1,6 @@
 import 'package:bhoomi_sakti/app/core/providers/core_providers.dart';
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
+import 'package:bhoomi_sakti/features/authentication/domain/usecases/resend_otp_usecase.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/features/authentication/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:bhoomi_sakti/features/authentication/data/repositories/auth_repository_impl.dart';
@@ -45,10 +46,10 @@ final _verifyOtpUsecaseProvider = Provider<VerifyOtpUsecase>((ref) {
   return VerifyOtpUsecase(repository);
 });
 
-// final _getCurrentUserUsecaseProvider = Provider<GetCurrentUserUsecase>((ref) {
-//   final repository = ref.watch(_authRepositoryProvider);
-//   return GetCurrentUserUsecase(repository);
-// });
+final _resendOtpUsecaseProvider = Provider<ResendOtpUsecase>((ref) {
+  final repository = ref.watch(_authRepositoryProvider);
+  return ResendOtpUsecase(authRepository: repository);
+});
 
 // LoginBloc Provider
 final loginBlocProvider = Provider.autoDispose<LoginBloc>((ref) {
@@ -67,9 +68,9 @@ final signupBlocProvider = Provider.autoDispose<SignupBloc>((ref) {
 // VerifyOtpBloc Provider
 final verifyOtpBlocProvider = Provider.autoDispose<VerifyOtpBloc>((ref) {
   final verifyOtpUsecase = ref.watch(_verifyOtpUsecaseProvider);
-  final authNotifier = ref.watch(authNotifierProvider.notifier);
+  final resendOtpUsecase = ref.watch(_resendOtpUsecaseProvider);
   return VerifyOtpBloc(
     verifyOtpUsecase: verifyOtpUsecase,
-    authNotifier: authNotifier,
+    resendOtpUsecase: resendOtpUsecase,
   );
 });

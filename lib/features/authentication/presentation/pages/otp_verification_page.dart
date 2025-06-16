@@ -1,6 +1,7 @@
 import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
 import 'package:bhoomi_sakti/features/authentication/domain/entities/otp_verification_type.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -101,14 +102,29 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
 
   @override
   Widget build(BuildContext context) {
-    const gap = 16.0;
+    const gap = 12.0;
     // final size = MediaQuery.of(context).size;
     final theme = Theme.of(context);
     final colorTheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
     return Scaffold(
-      // appBar: AppBar(),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              if (widget.flowType == OtpFlowType.login) {
+                context.replace(AppRoutePaths.login);
+              } else {
+                context.replace(AppRoutePaths.signUp);
+              }
+            }
+          },
+          icon: Icon(Icons.arrow_back, color: colorTheme.onSecondary),
+        ),
+      ),
       backgroundColor: colorTheme.surface,
       body: BlocConsumer<VerifyOtpBloc, VerifyOtpState>(
         bloc: ref.watch(verifyOtpBlocProvider),
@@ -138,25 +154,25 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
         builder: (context, state) {
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      'Verify Account With OTP',
+                      'Check Your Messages',
                       style: textTheme.headlineMedium,
                     ),
 
                     const SizedBox(height: gap),
                     Text(
-                      'Enter 6 digit OTP sent to +91-${widget.mobileNumber}',
+                      'A 6 digit OTP has been sent to your mobile number +91-${widget.mobileNumber}',
                       style: textTheme.bodyMedium,
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: gap * 1.25),
+                    const SizedBox(height: gap * 2),
                     Pinput(
                       controller: _otpController,
                       length: 6,
@@ -222,7 +238,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                         return null;
                       },
                     ),
-                    const SizedBox(height: gap * 1.25),
+                    const SizedBox(height: gap * 2),
 
                     SizedBox(
                       width: double.infinity,
@@ -240,7 +256,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                                   onPressed: _onVerifyOtpPressed,
                                   child: Text(
                                     'Verify OTP',
-                                    style: textTheme.bodyMedium?.copyWith(
+                                    style: textTheme.bodyLarge?.copyWith(
                                       color: colorTheme.onPrimary,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -249,49 +265,75 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                               );
                             },
                           ),
-                          const SizedBox(height: gap * 1.25),
+
+                          const SizedBox(height: gap * 2),
+
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextButton(
-                                onPressed:
-                                    _canResendOtp ? _onResendOtpPressed : null,
-                                child: ValueListenableBuilder(
-                                  valueListenable: _resendTimerSeconds,
-                                  builder: (context, value, child) {
-                                    return Text(
-                                      _canResendOtp
-                                          ? 'Resend OTP'
-                                          : 'Resend OTP in $value s',
+                              RichText(
+                                text: TextSpan(
+                                  text: "Haven't get the OTP yet? ",
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: Colors.grey.shade500,
+                                  ),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text: 'Resend OTP ',
                                       style: textTheme.bodyMedium?.copyWith(
-                                        // decoration: TextDecoration.underline,
-                                        color: colorTheme.onSurface,
-                                        fontWeight: FontWeight.bold,
+                                        color: colorTheme.primary,
+                                        decoration: TextDecoration.underline,
+                                        decorationStyle:
+                                            TextDecorationStyle.solid,
+                                        decorationColor: colorTheme.primary,
                                       ),
-                                      textDirection: TextDirection.ltr,
+                                      recognizer:
+                                          TapGestureRecognizer()
+                                            ..onTap = () {
+                                              if (state
+                                                  is VerifyOtpResendLoading) {
+                                                return;
+                                              }
+                                              context.replace(
+                                                AppRoutePaths.signUp,
+                                              );
+                                            },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              if (!_canResendOtp)
+                                BlocConsumer<VerifyOtpBloc, VerifyOtpState>(
+                                  listener: (context, state) {
+                                    if (state is VerifyOtpResendFailure) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(state.failure.message),
+                                          backgroundColor: colorTheme.error,
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  builder: (context, state) {
+                                    if (state is VerifyOtpLoading) {
+                                      return const CircularProgressIndicator();
+                                    }
+                                    return ValueListenableBuilder(
+                                      valueListenable: _resendTimerSeconds,
+                                      builder: (context, value, child) {
+                                        return Text(
+                                          'in $value s',
+                                          style: textTheme.bodyMedium?.copyWith(
+                                            color: colorTheme.onSurface,
+                                          ),
+                                          textDirection: TextDirection.ltr,
+                                        );
+                                      },
                                     );
                                   },
                                 ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  context.pop();
-                                },
-                                child: ValueListenableBuilder(
-                                  valueListenable: _resendTimerSeconds,
-                                  builder: (context, value, child) {
-                                    return Text(
-                                      'Back',
-                                      style: textTheme.bodyMedium?.copyWith(
-                                        // decoration: TextDecoration.underline,
-                                        color: colorTheme.onSurface,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textDirection: TextDirection.ltr,
-                                    );
-                                  },
-                                ),
-                              ),
                             ],
                           ),
                         ],

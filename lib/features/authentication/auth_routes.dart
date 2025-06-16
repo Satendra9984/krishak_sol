@@ -53,9 +53,12 @@ List<GoRoute> getAuthRoutes(Ref ref) => [
           body: Center(child: CircularProgressIndicator()),
         ); // Placeholder while redirecting
       }
-      return OtpVerificationPage(
-        mobileNumber: mobileNumber,
-        flowType: flowType,
+      return BlocProvider.value(
+        value: ref.read(verifyOtpBlocProvider),
+        child: OtpVerificationPage(
+          mobileNumber: mobileNumber,
+          flowType: flowType,
+        ),
       );
     },
   ),

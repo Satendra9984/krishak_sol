@@ -8,6 +8,7 @@ class CustomTextFormField extends StatefulWidget {
     super.key,
     this.obscureText = false,
     this.prefixIcon,
+    this.hintText,
     this.keyboardType = TextInputType.text,
   });
   final TextEditingController controller;
@@ -16,6 +17,7 @@ class CustomTextFormField extends StatefulWidget {
   final Icon? prefixIcon;
   final TextInputType keyboardType;
   final String? Function(String?) validator;
+  final String? hintText;
 
   @override
   State<CustomTextFormField> createState() => _CustomTextFormFieldState();
@@ -42,15 +44,21 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-          child: Text(widget.labelText, style: textTheme.titleMedium),
+          child: Text(
+            widget.labelText,
+            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+          ),
         ),
         TextFormField(
           controller: widget.controller,
           cursorColor: colorScheme.primary,
           style: textTheme.titleMedium,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-
           decoration: InputDecoration(
+            hintText: widget.hintText,
+            hintStyle: textTheme.titleMedium?.copyWith(
+              color: Color(0xffD9D9D9),
+            ),
             errorMaxLines: 4,
             isDense: false,
             prefixIcon: widget.prefixIcon,
@@ -68,29 +76,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                     )
                     : null,
             labelStyle: textTheme.titleSmall,
-            // fillColor: colorScheme.surface,
-            // fillColor: colorScheme.secondary,
             filled: true,
-            // border: OutlineInputBorder(
-            //   borderRadius: borderRadius, // Set the border radius here
-            //   borderSide: BorderSide(color: colorScheme.outline),
-            // ),
-            // enabledBorder: OutlineInputBorder(
-            //   borderRadius: borderRadius, // Set the border radius here
-            //   borderSide: BorderSide(color: colorScheme.outline),
-            // ),
-            // focusedBorder: OutlineInputBorder(
-            //   borderRadius: borderRadius, // Set the border radius here
-            //   // borderSide: BorderSide(color: Colors.black),
-            // ),
-            // errorBorder: OutlineInputBorder(
-            //   borderRadius: borderRadius, // Set the border radius here
-            //   borderSide: BorderSide(color: colorScheme.error),
-            // ),
-            // focusedErrorBorder: OutlineInputBorder(
-            //   borderRadius: borderRadius, // Set the border radius here
-            //   borderSide: BorderSide(color: colorScheme.error),
-            // ),
           ),
           obscureText: _isObscure,
           keyboardType: widget.keyboardType,
