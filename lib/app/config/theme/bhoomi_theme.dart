@@ -32,8 +32,7 @@ class BhoomiTheme {
       // ColorScheme defines core colors for your app's UI elements.
       colorScheme: ColorScheme.light(
         primary: const Color(
-          // 0xFF388E3C,
-          0xFF04B150,
+          0xFF04B150
         ), // Deep Green. Use for main buttons, FAB, toggles, progress bars, selected items.
         onPrimary: Colors.white, // Text/icons on primary color.
         secondary: const Color(

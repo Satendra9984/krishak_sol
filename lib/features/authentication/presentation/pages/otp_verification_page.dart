@@ -179,13 +179,13 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                       autofocus: true,
                       defaultPinTheme: PinTheme(
                         width: 48,
-                        height: 56,
+                        height: 52,
                         textStyle: textTheme.titleLarge?.copyWith(
-                          color: colorTheme.primary,
+                          color: colorTheme.onSecondary,
                           fontWeight: FontWeight.bold,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Color(0xffDFDDDD),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color: colorTheme.primary.withValues(
@@ -196,16 +196,14 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                         ),
                       ),
                       focusedPinTheme: PinTheme(
-                        width: 52,
-                        height: 60,
+                        width: 48,
+                        height: 52,
                         textStyle: textTheme.titleLarge?.copyWith(
                           color: colorTheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                         decoration: BoxDecoration(
-                          color: colorTheme.primary.withValues(
-                            alpha: (0.08 * 255),
-                          ),
+                          color: Color(0xffDFDDDD),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: colorTheme.primary,
@@ -215,15 +213,13 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                       ),
                       errorPinTheme: PinTheme(
                         width: 48,
-                        height: 56,
-                        textStyle: textTheme.titleLarge?.copyWith(
+                        height: 52,
+                        textStyle: textTheme.bodyMedium?.copyWith(
                           color: colorTheme.error,
-                          fontWeight: FontWeight.bold,
+                          // fontWeight: FontWeight.bold,
                         ),
                         decoration: BoxDecoration(
-                          color: colorTheme.error.withValues(
-                            alpha: (0.08 * 255),
-                          ),
+                          color: Color(0xffDFDDDD),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: colorTheme.error, width: 2),
                         ),
