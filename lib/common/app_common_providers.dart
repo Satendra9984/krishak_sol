@@ -1,3 +1,4 @@
+export 'package:bhoomi_sakti/app/core/providers/core_providers.dart';
 import 'package:bhoomi_sakti/app/core/providers/core_providers.dart';
 import 'package:bhoomi_sakti/common/auth/data/datasource/user_profile_datasource.dart';
 import 'package:bhoomi_sakti/common/auth/data/repository/user_profile_repository_impl.dart';
@@ -24,13 +25,14 @@ final getCurrentUserUsecaseProvider = Provider((ref) {
 });
 
 // AuthNotifier Provider
-final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((
-  ref,
-) {
+final authNotifierProvider = StateNotifierProvider<
+  UserAccountNotifier,
+  AuthState
+>((ref) {
   final getCurrentUserUsecase = ref.watch(getCurrentUserUsecaseProvider);
   final tokenStorageService = ref.watch(tokenStorageServiceProvider);
   // final refreshTokenUsecase = ref.watch(refreshTokenUsecaseProvider); // If needed directly by AuthNotifier
-  return AuthNotifier(
+  return UserAccountNotifier(
     getCurrentUserUsecase: getCurrentUserUsecase,
     tokenStorageService: tokenStorageService,
   );

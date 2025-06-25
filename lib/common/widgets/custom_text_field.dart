@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomTextFormField extends StatefulWidget {
   const CustomTextFormField({
     required this.controller,
-    required this.labelText,
+    this.labelText,
     required this.validator,
     super.key,
     this.obscureText = false,
@@ -12,7 +12,7 @@ class CustomTextFormField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
   });
   final TextEditingController controller;
-  final String labelText;
+  final String? labelText;
   final bool obscureText;
   final Icon? prefixIcon;
   final TextInputType keyboardType;
@@ -42,13 +42,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-          child: Text(
-            widget.labelText,
-            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+        if (widget.labelText != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: Text(
+              widget.labelText!,
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
-        ),
         TextFormField(
           controller: widget.controller,
           cursorColor: colorScheme.primary,

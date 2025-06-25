@@ -11,14 +11,21 @@ import 'package:bhoomi_sakti/features/dashboard/presentation/pages/dashboard_scr
 import 'package:bhoomi_sakti/features/authentication/auth_routes.dart';
 import 'package:bhoomi_sakti/common/providers/auth_notifier/auth_state.dart';
 import 'package:bhoomi_sakti/features/onboarding/onboarding_providers.dart';
-import 'package:bhoomi_sakti/features/onboarding/presentation/blocs/onboarding_bloc/onboarding_bloc.dart';
 import 'package:bhoomi_sakti/features/onboarding/presentation/pages/onboarding_page.dart';
 
 import 'app_route_paths.dart';
 
 // Provider for GoRouter
+import 'package:bhoomi_sakti/app/ui/main_scaffold.dart';
+import 'package:bhoomi_sakti/features/cart/presentation/pages/cart_page.dart';
+import 'package:bhoomi_sakti/features/products/presentation/pages/shop_page.dart';
+import 'package:bhoomi_sakti/features/profile/presentation/pages/profile_page.dart';
+
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
+
 final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
+    navigatorKey: _rootNavigatorKey,
     initialLocation: AppRoutePaths.splash, // Start with splash to check auth
     routes: [
       // Splash Screen
@@ -45,20 +52,59 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       // Auth Routes
       ...getAuthRoutes(ref),
 
-      // Main App
-      GoRoute(
-        path: AppRoutePaths.home,
-        builder: (context, state) => const DashboardScreen(),
-        routes: [
-          // Add nested routes here if needed
+      // Main App with Bottom Navigation
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return MainScaffold(navigationShell: navigationShell);
+        },
+        branches: [
+          // Dashboard Branch
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path:
+                    AppRoutePaths
+                        .home, // This should be the root path for the shell
+                builder: (context, state) => const DashboardScreen(),
+              ),
+            ],
+          ),
+          // Shop Branch
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/shop',
+                builder: (context, state) => const ShopPage(),
+              ),
+            ],
+          ),
+          // Cart Branch
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/cart',
+                builder: (context, state) => const CartPage(),
+              ),
+            ],
+          ),
+          // Profile Branch
+          StatefulShellBranch(
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfilePage(),
+              ),
+            ],
+          ),
         ],
       ),
     ],
     // errorBuilder: (context, state) => ErrorScreen(error: state.error),
     /// TODO: Implement ErrorScreen
     redirect: (BuildContext context, GoRouterState state) async {
-      // final prefs = await ref.read(sharedPreferencesInitializerProvider.future);
-      // final bool isBoardingComplete = await OnboardingBloc.isOnboardingComplete(
+      // final onboardingBloc = ref.read(onboardingBlocProvider);
+      // final prefs = await ref.read(sharedPreferencesProvider.future);
+      // final bool isBoardingComplete = await onboardingBloc.isOnboardingComplete(
       //   prefs,
       // );
       // final bool onOnboardingScreen =
@@ -100,7 +146,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       //   }
       // }
 
-      // For AuthFailureState, decide if you want to redirect or show error on current page
+      // // For AuthFailureState, decide if you want to redirect or show error on current page
       // if (authState is AuthFailureState) {
       //   return '/error'; // Or handle inline
       // }

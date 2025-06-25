@@ -9,8 +9,6 @@ import 'package:bhoomi_sakti/features/authentication/auth_providers.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_bloc.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_event.dart';
 import 'package:bhoomi_sakti/features/authentication/presentation/blocs/otp_verification/verify_otp_state.dart';
-import 'package:bhoomi_sakti/features/authentication/presentation/blocs/login/login_event.dart';
-import 'package:bhoomi_sakti/features/authentication/presentation/blocs/signup/signup_event.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async';
 import 'package:pinput/pinput.dart';
@@ -83,23 +81,6 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
     }
   }
 
-  void _onResendOtpPressed() {
-    if (_canResendOtp) {
-      startResendTimer(); // Restart timer
-      if (widget.flowType == OtpFlowType.login) {
-        ref
-            .read(loginBlocProvider)
-            .add(ResendLoginOtp(mobileNumber: widget.mobileNumber));
-      } else if (widget.flowType == OtpFlowType.signup) {
-        // For signup resend, we pass an empty name as discussed.
-        // This might need adjustment based on backend behavior.
-        ref
-            .read(signupBlocProvider)
-            .add(ResendSignupOtp(mobileNumber: widget.mobileNumber));
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     const gap = 12.0;
@@ -140,7 +121,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
           } else if (state is VerifyOtpSuccess) {
             // Check if it's a resend scenario, maybe by a flag if needed
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('OTP Resent Successfully!')),
+              const SnackBar(content: Text('OTP Verified Successfully!')),
             );
 
             ref
@@ -313,7 +294,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                                     }
                                   },
                                   builder: (context, state) {
-                                    if (state is VerifyOtpLoading) {
+                                    if (state is VerifyOtpResendLoading) {
                                       return const CircularProgressIndicator();
                                     }
                                     return ValueListenableBuilder(

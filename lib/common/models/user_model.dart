@@ -8,6 +8,7 @@ class UserModel extends UserEntity {
     required super.role,
     super.profilePictureUrl,
     required super.active,
+    super.location,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +19,7 @@ class UserModel extends UserEntity {
       role: json['role'] as String,
       profilePictureUrl: json['profilePictureUrl'] as String?,
       active: json['active'] as bool,
+      location: json['location'] as String?,
     );
   }
 
@@ -29,6 +31,7 @@ class UserModel extends UserEntity {
       'role': role,
       'profilePictureUrl': profilePictureUrl,
       'active': active,
+      'location': location,
     };
   }
 
@@ -40,6 +43,7 @@ class UserModel extends UserEntity {
       role: role,
       profilePictureUrl: profilePictureUrl,
       active: active,
+      location: location,
     );
   }
 }

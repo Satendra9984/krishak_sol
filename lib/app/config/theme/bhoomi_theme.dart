@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Bhoomi Shakti App Themes
 /// - Light and Dark themes with agriculture-inspired palette
@@ -29,10 +30,11 @@ class BhoomiTheme {
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: GoogleFonts.inter().fontFamily,
       // ColorScheme defines core colors for your app's UI elements.
       colorScheme: ColorScheme.light(
         primary: const Color(
-          0xFF04B150
+          0xFF04B150,
         ), // Deep Green. Use for main buttons, FAB, toggles, progress bars, selected items.
         onPrimary: Colors.white, // Text/icons on primary color.
         secondary: const Color(
@@ -44,14 +46,14 @@ class BhoomiTheme {
         error: const Color(0xFFD32F2F), // Error states, error buttons, banners.
         onError: Colors.white, // Text/icons on error color.
       ),
-      scaffoldBackgroundColor: const Color(0xFFF8FFF4),
+      scaffoldBackgroundColor: const Color(0xFFFfffff),
       appBarTheme: const AppBarTheme(
         backgroundColor: Colors.white,
-        foregroundColor: Color(0xFF04B150),
+        foregroundColor: Color(0xFF000000),
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStyle(
-          color: Color(0xFF04B150),
+          color: Color(0xFF000000),
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
@@ -126,6 +128,8 @@ class BhoomiTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
+      fontFamily: GoogleFonts.inter().fontFamily,
+
       brightness: Brightness.dark,
       colorScheme: ColorScheme.dark(
         primary: const Color(0xFF04B150), // Lighter green

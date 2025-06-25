@@ -5,6 +5,7 @@ class UserEntity extends Equatable {
   final String name;
   final String mobileNumber;
   final String role;
+  final String? location;
   final String? profilePictureUrl;
   final bool active;
 
@@ -13,6 +14,7 @@ class UserEntity extends Equatable {
     required this.name,
     required this.mobileNumber,
     required this.role,
+    this.location,
     this.profilePictureUrl,
     required this.active,
   });
@@ -23,11 +25,25 @@ class UserEntity extends Equatable {
       userId: json['userId'] as int,
       name: json['name'] as String,
       mobileNumber: json['mobileNumber'] as String,
+      location: json['location'] as String?,
       role: json['role'] as String,
       profilePictureUrl: json['profilePictureUrl'] as String?,
       active: json['active'] as bool,
     );
   }
+
+  /*
+
+{
+    "userId": 5,
+    "name": "Satendra Pal",
+    "mobileNumber": "3333333333",
+    "location": null,
+    "role": "USER",
+    "profilePictureUrl": null,
+    "active": false,
+}
+*/
 
   // Method to convert a UserEntity to a JSON map
   Map<String, dynamic> toJson() {
@@ -38,6 +54,7 @@ class UserEntity extends Equatable {
       'role': role,
       'profilePictureUrl': profilePictureUrl,
       'active': active,
+      'location': location,
     };
   }
 
@@ -47,6 +64,7 @@ class UserEntity extends Equatable {
     name,
     mobileNumber,
     role,
+    location,
     profilePictureUrl,
     active,
   ];

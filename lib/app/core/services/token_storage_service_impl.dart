@@ -11,6 +11,7 @@ class TokenStorageKeys {
 /// Abstract contract
 abstract class TokenStorageService {
   Future<void> initialize();
+  Future<TokensEntity?> getTokens();
   Future<void> storeTokens(TokensEntity tokens);
   Future<void> updateAccessToken(String accessToken);
   Future<bool> hasStoredTokens();
@@ -152,5 +153,20 @@ class TokenStorageServiceImpl implements TokenStorageService {
   void dispose() {
     _accessToken = null;
     _refreshToken = null;
+  }
+
+  @override
+  Future<TokensEntity?> getTokens() async {
+    try {
+      final accessToken = await _secureStorage.read(key: TokenStorageKeys.accessToken);
+      final refreshToken = await _secureStorage.read(key: TokenStorageKeys.refreshToken);
+
+      if (accessToken != null && refreshToken != null) {
+        return TokensEntity(accessToken: accessToken, refreshToken: refreshToken);
+      }
+      return null;
+    } catch (e) {
+      throw TokenStorageException('Failed to get tokens: $e');
+    }
   }
 }
