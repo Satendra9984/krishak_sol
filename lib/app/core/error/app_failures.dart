@@ -150,6 +150,12 @@ class ServerFailure extends Failure {
       : super(message, code: code ?? 'SERVER_ERROR', data: data);
 }
 
+/// Failure for general application errors
+class AppFailure extends Failure {
+  const AppFailure(String message, {String? code, dynamic data})
+      : super(message, code: code, data: data);
+}
+
 /// Failure for cache related errors
 class CacheFailure extends Failure {
   const CacheFailure({String message = 'Cache error occurred', String? code})

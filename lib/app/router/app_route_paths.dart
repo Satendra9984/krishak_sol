@@ -12,6 +12,9 @@ class AppRoutePaths {
   // Main app routes
   static const String home = '/home';
   static const String dashboard = '/dashboard';
+  static const String shop = '/shop';
+  static const String productDetails = 'product/:productId';
+  static const String cart = '/cart';
   static const String profile = '/profile';
   static const String settings = '/settings';
 

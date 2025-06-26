@@ -19,6 +19,7 @@ import 'app_route_paths.dart';
 import 'package:bhoomi_sakti/app/ui/main_scaffold.dart';
 import 'package:bhoomi_sakti/features/cart/presentation/pages/cart_page.dart';
 import 'package:bhoomi_sakti/features/products/presentation/pages/shop_page.dart';
+import 'package:bhoomi_sakti/features/products/presentation/pages/product_details_page.dart';
 import 'package:bhoomi_sakti/features/profile/presentation/pages/profile_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -64,7 +65,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path:
                     AppRoutePaths
-                        .home, // This should be the root path for the shell
+                        .dashboard, // This should be the root path for the shell
                 builder: (context, state) => const DashboardScreen(),
               ),
             ],
@@ -73,8 +74,17 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/shop',
+                path: AppRoutePaths.shop,
                 builder: (context, state) => const ShopPage(),
+                routes: [
+                  GoRoute(
+                    path: AppRoutePaths.productDetails,
+                    builder: (context, state) {
+                      final productId = state.extra as String;
+                      return ProductDetailsPage(productId: productId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -82,7 +92,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/cart',
+                path: AppRoutePaths.cart,
                 builder: (context, state) => const CartPage(),
               ),
             ],
@@ -91,7 +101,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/profile',
+                path: AppRoutePaths.profile,
                 builder: (context, state) => const ProfilePage(),
               ),
             ],

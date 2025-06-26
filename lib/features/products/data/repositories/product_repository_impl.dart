@@ -11,6 +11,20 @@ class ProductRepositoryImpl implements ProductRepository {
   ProductRepositoryImpl(this._remoteDataSource);
 
   @override
+  Future<Either<Failure, ProductEntity>> getProductById(String productId) async {
+    try {
+      final productModel = await _remoteDataSource.getProductById(productId);
+      return Right(productModel);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(
+        ServerFailure(message: 'An unexpected error occurred: ${e.toString()}'),
+      );
+    }
+  }
+
+  @override
   Future<Either<Failure, List<ProductEntity>>> getProducts() async {
     try {
       final productModels = await _remoteDataSource.getProducts();
