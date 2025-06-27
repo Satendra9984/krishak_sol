@@ -80,7 +80,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: AppRoutePaths.productDetails,
                     builder: (context, state) {
-                      final productId = state.extra as String;
+                      final productId =
+                          state.pathParameters['productId'] as String;
                       return ProductDetailsPage(productId: productId);
                     },
                   ),

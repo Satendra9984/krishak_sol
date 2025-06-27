@@ -1,6 +1,7 @@
 import 'package:bhoomi_sakti/features/cart/cart_providers.dart';
 import 'package:bhoomi_sakti/features/cart/presentation/widget/cart_item.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/features/cart/presentation/bloc/cart_bloc.dart';
 
@@ -9,11 +10,14 @@ class CartPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cartState = ref.watch(cartBlocProvider);
-
     return Scaffold(
       appBar: AppBar(title: const Text('My Cart')),
-      body: _buildBody(context, ref, cartState.state),
+      body: BlocBuilder<CartBloc, CartState>(
+        bloc: ref.watch(cartBlocProvider),
+        builder: (context, state) {
+          return _buildBody(context, ref, state);
+        },
+      ),
     );
   }
 
@@ -33,7 +37,10 @@ class CartPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final item = state.cart.items[index];
                 // This is the key fix: pass the ref down to the widget
-                return CartItemWidget(item: item, ref: ref);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CartItemWidget(item: item, ref: ref),
+                );
               },
             ),
           ),

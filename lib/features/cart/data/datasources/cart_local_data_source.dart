@@ -27,7 +27,8 @@ class CartLocalDataSourceImpl implements CartLocalDataSource {
     final List<CartItemEntity> updatedItems = List.from(currentCart.items);
 
     final itemIndex = updatedItems.indexWhere(
-      (item) => item.product.productId == product.productId,
+      (item) =>
+          item.product.productId.toString() == product.productId.toString(),
     );
 
     if (itemIndex != -1) {
@@ -46,7 +47,9 @@ class CartLocalDataSourceImpl implements CartLocalDataSource {
   Future<void> removeProductFromCart(String productId) async {
     final currentCart = _cart.value;
     final List<CartItemEntity> updatedItems = List.from(currentCart.items);
-    updatedItems.removeWhere((item) => item.product.productId == productId);
+    updatedItems.removeWhere(
+      (item) => item.product.productId.toString() == productId,
+    );
     _cart.add(CartEntity(items: updatedItems));
   }
 
@@ -60,7 +63,7 @@ class CartLocalDataSourceImpl implements CartLocalDataSource {
     final currentCart = _cart.value;
     final List<CartItemEntity> updatedItems = List.from(currentCart.items);
     final itemIndex = updatedItems.indexWhere(
-      (item) => item.product.productId == productId,
+      (item) => item.product.productId.toString() == productId,
     );
 
     if (itemIndex != -1) {

@@ -53,7 +53,7 @@ class ProductDetailsPage extends ConsumerWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: const Icon(
+            icon: Icon(
               FontAwesomeIcons.heart,
               size: 28,
               color: Color(0xffD31D1D),
@@ -102,16 +102,16 @@ class ProductDetailsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                color: const Color(0xffF8F9FE),
+                padding: EdgeInsets.symmetric(vertical: 8),
+                color: Color(0xffF8F9FE),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       FontAwesomeIcons.locationDot,
                       color: Color(0xff3657AD),
                       size: 16,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: 8),
                     Consumer(
                       builder: (context, ref, _) {
                         final userAccount = ref.watch(currentUserProvider);
@@ -131,10 +131,11 @@ class ProductDetailsPage extends ConsumerWidget {
                                 style: theme.textTheme.labelLarge?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
+
                                 recognizer:
                                     TapGestureRecognizer()
                                       ..onTap = () {
-                                        // TODO: Handle location change
+                                        // TODO: Implement location selection
                                       },
                               ),
                             ],
@@ -145,71 +146,268 @@ class ProductDetailsPage extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Container(
-                height: 200,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
+
+              SizedBox(height: 20),
+              Center(
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: Image.network(
+                        product.imageUrl!,
+                        height: 200,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Center(
+                            child: SizedBox(
+                              height: 200,
+                              child: const Icon(Icons.error, color: Colors.red),
+                            ),
+                          );
+                        },
+                        headers: {
+                          'Authorization':
+                              'Bearer ${ref.read(tokenStorageServiceProvider).accessToken}',
+                        },
+                      ),
+                    );
+                  },
                 ),
-                // TODO: Replace with actual product image
-                child: const Icon(Icons.image, size: 100, color: Colors.grey),
               ),
-              const SizedBox(height: 20),
-              Text(
-                product.name,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                '₹${product.price.toStringAsFixed(2)}',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
+
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Consumer(
-                      builder: (context, ref, child) {
-                        return ElevatedButton.icon(
-                          onPressed: () {
-                            ref
-                                .read(addProductToCartUsecaseProvider)
-                                .call(product);
-                          },
-                          icon: Icon(
-                            Icons.shopping_cart,
-                            color: theme.colorScheme.primary,
+                  Text(
+                    product.name,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  Row(
+                    children: [
+                      Icon(
+                        FontAwesomeIcons.heart,
+                        size: 20,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 16),
+                      Icon(
+                        FontAwesomeIcons.share,
+                        size: 20,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 20),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '₹',
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
                           ),
-                          label: Text(
-                            'Add to Cart',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: theme.colorScheme.primary,
-                            ),
+                        ),
+                        TextSpan(
+                          text: product.price.toStringAsFixed(2),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
                           ),
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            backgroundColor: Colors.white,
-                            foregroundColor: theme.colorScheme.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(
-                                color: theme.colorScheme.primary,
-                              ),
-                            ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: (product.price * 1.25).toStringAsFixed(0),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.lineThrough,
+                            decorationThickness: 2,
                           ),
-                        );
-                      },
+                        ),
+                        TextSpan(
+                          text: ' 25% off',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 24),
+
+              // offers
+              Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Color(0xffEEF1FF),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.moneyBill,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Cash on Delivery',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 16),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Color(0xffEEF1FF),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          FontAwesomeIcons.solidStar,
+                          size: 16,
+                          color: Colors.purple,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Lowest Price',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 20),
+
+              Divider(color: Color(0xffE0E0E0)),
+
+              SizedBox(height: 20),
+
+              // select quantity
+              Text(
+                'Select Quantity',
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
+              SizedBox(height: 12),
+              // create chips of various kgs with borderradius 16 with padding 16h and 6v and white background and spacing 12
+              Builder(
+                builder: (context) {
+                  final padding = EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  );
+                  final shape = RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  );
+                  return Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      Chip(
+                        label: Text('1 kg'),
+                        // backgroundColor: Color(0xffEEF1FF),
+                        padding: padding,
+                        shape: shape,
+                      ),
+                      Chip(
+                        label: Text('2 kg'),
+                        // backgroundColor: Color(0xffEEF1FF),
+                        padding: padding,
+                        shape: shape,
+                      ),
+                      Chip(
+                        label: Text('2.5 kg'),
+                        // backgroundColor: Color(0xffEEF1FF),
+                        padding: padding,
+                        shape: shape,
+                      ),
+                      Chip(
+                        label: Text('3 kg'),
+                        // backgroundColor: Color(0xffEEF1FF),
+                        padding: padding,
+                        shape: shape,
+                      ),
+                      Chip(
+                        label: Text('5 kg'),
+                        // backgroundColor: Color(0xffEEF1FF),
+                        padding: padding,
+                        shape: shape,
+                      ),
+                    ],
+                  );
+                },
+              ),
+
+              SizedBox(height: 20),
+
+              Divider(color: Color(0xffE0E0E0)),
+
+              SizedBox(height: 20),
+
+              // Buy now and add to cart buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        ref.read(addProductToCartUsecaseProvider).call(product);
+                      },
+                      icon: Icon(
+                        Icons.shopping_cart,
+                        color: theme.colorScheme.primary,
+                      ),
+                      label: Text(
+                        'Add to Cart',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.white,
+                        foregroundColor: theme.colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(color: theme.colorScheme.primary),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {},
@@ -233,17 +431,22 @@ class ProductDetailsPage extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              const Divider(color: Color(0xffE0E0E0)),
-              const SizedBox(height: 20),
+
+              SizedBox(height: 20),
+
+              Divider(color: Color(0xffE0E0E0)),
+
+              SizedBox(height: 20),
+
               Text(
                 'Product Details',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
               Table(
+                // border: TableBorder.all(),
                 columnWidths: const {
                   0: FractionColumnWidth(0.4),
                   1: FractionColumnWidth(0.6),
@@ -257,47 +460,50 @@ class ProductDetailsPage extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      // SizedBox(width: 8),
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
                         child: Text(product.name),
                       ),
                     ],
                   ),
-                  if (product.description != null)
-                    TableRow(
-                      children: [
-                        Text(
-                          'Description',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                  TableRow(
+                    children: [
+                      Text(
+                        'Description',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Text(product.description!),
+                      ),
+                      // SizedBox(width: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(product.description!),
+                      ),
+                    ],
+                  ),
+                  TableRow(
+                    children: [
+                      Text(
+                        'Manufacturer',
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
-                  if (product.manufacturer != null)
-                    TableRow(
-                      children: [
-                        Text(
-                          'Manufacturer',
-                          style: theme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Text(product.manufacturer!),
-                        ),
-                      ],
-                    ),
+                      ),
+                      // SizedBox(width: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: Text(product.manufacturer ?? ''),
+                      ),
+                    ],
+                  ),
                 ],
               ),
-              const SizedBox(height: 20),
-              const Divider(color: Color(0xffE0E0E0)),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
+
+              Divider(color: Color(0xffE0E0E0)),
+
+              SizedBox(height: 20),
             ],
           ),
         ),

@@ -274,8 +274,7 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                           product: product,
                           onTap: () {
                             context.push(
-                              AppRoutePaths.productDetails,
-                              extra: product.productId,
+                              '${AppRoutePaths.shop}/product/${product.productId}',
                             );
                           },
                         );
