@@ -1,9 +1,16 @@
+import 'package:bhoomi_sakti/features/cart/domain/entities/cart_entity.dart';
 import 'package:bhoomi_sakti/features/orders/data/model/order_model.dart';
 import 'package:dio/dio.dart';
 import '../../../../app/core/error/app_exceptions.dart';
 import '../../../../app/core/network/api_client.dart';
 
 abstract class OrdersRemoteDataSource {
+  Future<OrderModel> createOrder({
+    required CartEntity cart,
+    required int paymentId,
+    required int agentId,
+  });
+
   Future<List<OrderModel>> getOrders({
     int page = 1,
     int limit = 10,
@@ -20,6 +27,44 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   final ApiClient apiClient;
 
   OrdersRemoteDataSourceImpl({required this.apiClient});
+
+  @override
+  Future<OrderModel> createOrder({
+    required CartEntity cart,
+    required int paymentId,
+    required int agentId,
+  }) async {
+    try {
+      final response = await apiClient.post(
+        '/orders',
+        data: {
+          'items':
+              cart.items
+                  .map(
+                    (item) => {
+                      'productId': item.product.productId,
+                      'quantity': item.quantity,
+                    },
+                  )
+                  .toList(),
+          'paymentId': paymentId,
+          'agentId': agentId,
+        },
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final Map<String, dynamic> jsonResponse = response.data;
+        return OrderModel.fromJson(jsonResponse);
+      } else {
+        throw ServerException(message: 'Failed to create order');
+      }
+    } catch (e) {
+      if (e is ServerException) {
+        rethrow;
+      }
+      throw NoInternetException();
+    }
+  }
 
   @override
   Future<List<OrderModel>> getOrders({
@@ -50,9 +95,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
         throw ServerException(message: 'Invalid response format');
       }
     } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to fetch orders');
-    } catch (e) {
-      throw ServerException(message: e.toString());
+      throw NoInternetException();
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:bhoomi_sakti/features/cart/domain/entities/cart_entity.dart';
 import 'package:bhoomi_sakti/features/orders/data/datasources/order_remote_data_source.dart';
 import 'package:bhoomi_sakti/features/orders/domain/entities/order.dart';
 import 'package:bhoomi_sakti/features/orders/domain/repositories/order_repository.dart';
@@ -14,6 +15,24 @@ class OrdersRepositoryImpl implements OrdersRepository {
     required this.remoteDataSource,
     required this.networkInfo,
   });
+
+  @override
+  Future<Either<Failure, OrderEntity>> createOrder({
+    required CartEntity cart,
+    required int paymentId,
+    required int agentId,
+  }) async {
+    try {
+      final result = await remoteDataSource.createOrder(
+        cart: cart,
+        paymentId: paymentId,
+        agentId: agentId,
+      );
+      return Right(result);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    }
+  }
 
   @override
   Future<Either<Failure, List<OrderEntity>>> getOrders({
