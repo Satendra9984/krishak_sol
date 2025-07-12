@@ -142,28 +142,3 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
 }
 
 // Provider
-final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((
-  ref,
-) {
-  // These would be injected through your DI container
-  // Ensure these providers exist and return the correct UseCase instances
-  final getOrders = ref.read(getOrdersUseCaseProvider);
-  final getOrderById = ref.read(getOrderByIdUseCaseProvider);
-  final cancelOrder = ref.read(cancelOrderUseCaseProvider);
-
-  return OrdersNotifier(getOrders, getOrderById, cancelOrder);
-});
-
-// Dummy providers for GetOrders, GetOrderById, CancelOrder for example purposes
-// You should have your actual domain layer providers here.
-final getOrdersUseCaseProvider = Provider<GetOrders>((ref) {
-  throw UnimplementedError('getOrdersUseCaseProvider is not implemented');
-});
-
-final getOrderByIdUseCaseProvider = Provider<GetOrderById>((ref) {
-  throw UnimplementedError('getOrderByIdUseCaseProvider is not implemented');
-});
-
-final cancelOrderUseCaseProvider = Provider<CancelOrder>((ref) {
-  throw UnimplementedError('cancelOrderUseCaseProvider is not implemented');
-});

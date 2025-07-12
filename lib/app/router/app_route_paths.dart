@@ -15,6 +15,7 @@ class AppRoutePaths {
   static const String shop = '/shop';
   static const String productDetails = 'product/:productId';
   static const String cart = '/cart';
+  static const String checkout = 'checkout/:agentId';
   static const String payment = '/payment';
   static const String profile = '/profile';
   static const String settings = '/settings';

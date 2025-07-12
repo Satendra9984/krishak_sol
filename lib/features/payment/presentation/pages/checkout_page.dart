@@ -8,8 +8,14 @@ import 'package:bhoomi_sakti/features/payment/presentation/widgets/checkout_bott
 import 'package:bhoomi_sakti/features/payment/presentation/widgets/checkout_item_list.dart';
 import 'package:bhoomi_sakti/features/payment/presentation/widgets/payment_summary.dart';
 import 'package:bhoomi_sakti/features/payment/presentation/widgets/payments_selector.dart';
+
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+// import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
+// import 'package:flutter_cashfree_pg_sdk/api/cftheme/cftheme.dart';
+// import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({Key? key, required this.agentId}) : super(key: key);
@@ -37,12 +43,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       backgroundColor: AppColors.background,
       appBar: const CheckoutAppBar(),
       body: BlocConsumer<CheckoutBloc, CheckoutState>(
-        listener: _handleStateChanges,
+        listener: (context, state) {
+          _handleStateChanges(context, state, theme);
+        },
         builder: (context, state) {
           return Stack(
             children: [
               _buildContent(state, theme),
-              if (_isLoading(state)) const CircularProgressIndicator(),
+              // if (_isLoading(state))
             ],
           );
         },
@@ -53,8 +61,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             return CheckoutBottomBar(
               totalAmount: state.totalAmount,
               selectedPaymentMode: state.selectedPaymentMode,
-              onProceedToPayment: () => _handleProceedToPayment(state),
-              isEnabled: _canProceedToPayment(state),
+              onProceedToPayment: () {
+                context.read<CheckoutBloc>().add(
+                  CheckoutPaymentCreated(
+                    amount: state.totalAmount,
+                    paymentMode: state.selectedPaymentMode!,
+                  ),
+                );
+              },
+              isEnabled:
+                  state.selectedPaymentMode != null &&
+                  state.selectedAgentId != null &&
+                  state.cartItems.isNotEmpty,
             );
           }
           return const SizedBox.shrink();
@@ -63,27 +81,39 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Widget _buildContent(CheckoutState state, ThemeData theme) {
-    switch (state.runtimeType) {
-      case CheckoutInitialState:
-      case CheckoutLoadingState:
-        return const Center(child: CircularProgressIndicator());
+  void _handleStateChanges(
+    BuildContext context,
+    CheckoutState state,
+    ThemeData theme,
+  ) {
+    switch (state) {
+      case CheckoutPaymentCreatedState():
+        _handlePaymentCreated(state, theme);
+        break;
 
-      case CheckoutLoadedState:
-        return _buildCheckoutContent(state as CheckoutLoadedState, theme);
+      case CheckoutSuccessState():
+        _handleCheckoutSuccess(state);
+        break;
 
-      case CheckoutErrorState:
-        return _buildErrorContent(state as CheckoutErrorState, theme);
+      case CheckoutErrorState():
+        _showErrorDialog(state.message);
+        break;
 
-      case CheckoutPaymentFailedState:
-        return _buildPaymentFailedContent(
-          state as CheckoutPaymentFailedState,
-          theme,
-        );
-
-      default:
-        return const SizedBox.shrink();
+      case _:
+        break;
     }
+  }
+
+  Widget _buildContent(CheckoutState state, ThemeData theme) {
+    return switch (state) {
+      CheckoutInitialState() || CheckoutLoadingState() => const Center(
+        child: CircularProgressIndicator(),
+      ),
+      CheckoutLoadedState() => _buildCheckoutContent(state, theme),
+      CheckoutErrorState() => _buildErrorContent(state, theme),
+      CheckoutPaymentFailedState() => _buildPaymentFailedContent(state, theme),
+      _ => const SizedBox.shrink(),
+    };
   }
 
   Widget _buildCheckoutContent(CheckoutLoadedState state, ThemeData theme) {
@@ -114,8 +144,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 24),
 
           // Agent Selection Section
-          _buildSectionTitle('Select Agent', theme),
-          const SizedBox(height: 24),
+          // _buildSectionTitle('Select Agent', theme),
+          // const SizedBox(height: 24),
 
           // Payment Summary Section
           _buildSectionTitle('Payment Summary', theme),
@@ -127,16 +157,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
           const SizedBox(height: 100), // Space for bottom bar
         ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title, ThemeData theme) {
-    return Text(
-      title,
-      style: theme.textTheme.titleMedium!.copyWith(
-        color: AppColors.textPrimary,
-        fontWeight: FontWeight.w600,
       ),
     );
   }
@@ -165,7 +185,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              context.read<CheckoutBloc>().add(const CheckoutRetryPayment());
+              context.read<CheckoutBloc>().add(
+                CheckoutRetryPayment(agentId: widget.agentId),
+              );
             },
             child: const Text('Retry'),
           ),
@@ -201,7 +223,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              context.read<CheckoutBloc>().add(const CheckoutRetryPayment());
+              context.read<CheckoutBloc>().add(
+                CheckoutRetryPayment(agentId: widget.agentId),
+              );
             },
             child: const Text('Try Again'),
           ),
@@ -210,82 +234,31 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _handleStateChanges(
-    BuildContext context,
-    CheckoutState state,
+  void _handlePaymentCreated(
+    CheckoutPaymentCreatedState state,
     ThemeData theme,
   ) {
-    switch (state.runtimeType) {
-      case CheckoutPaymentCreatedState:
-        final paymentCreated = state as CheckoutPaymentCreatedState;
-        _handlePaymentCreated(paymentCreated, theme);
-        break;
-
-      case CheckoutCashPaymentConfirmationState:
-        final cashPayment = state as CheckoutCashPaymentConfirmationState;
-        _showCashPaymentConfirmation(cashPayment, theme);
-        break;
-
-      case CheckoutSuccessState:
-        final success = state as CheckoutSuccessState;
-        _handleCheckoutSuccess(success);
-        break;
-
-      case CheckoutErrorState:
-        final error = state as CheckoutErrorState;
-        _showErrorDialog(error.message);
-        break;
-    }
-  }
-
-  void _handlePaymentCreated(CheckoutPaymentCreated state, ThemeData theme) {
     if (state.payment.paymentMode == PaymentMode.online) {
-      _initiateOnlinePayment(state.payment);
+      _initiateOnlinePayment(state.payment, theme);
     } else {
       // For cash payments, show confirmation screen
       // This will be handled by the bloc state change
+      // _showCashPaymentConfirmation(state, theme);
+      context.read<CheckoutBloc>().add(
+        CheckoutOrderConfirmed(payment: state.payment),
+      );
     }
   }
 
   void _initiateOnlinePayment(PaymentEntity payment, ThemeData theme) {
-    if (payment.cashfreeOrderResponse != null) {
-      final session = CFSession(
-        orderId: payment.cashfreeOrderResponse!.orderId,
-        payment_session_id: payment.cashfreeOrderResponse!.paymentSessionId,
-        environment: CFEnvironment.SANDBOX, // Change to PRODUCTION for live
-      );
-
-      final cFTheme = CFTheme(
-        navigationBarBackgroundColor:
-            theme.colorScheme.primary.value.toString(),
-        navigationBarTextColor: theme.colorScheme.onPrimary.value.toString(),
-        buttonBackgroundColor: theme.colorScheme.primary.value.toString(),
-        buttonTextColor: theme.colorScheme.onPrimary.value.toString(),
-      );
-
-      CashfreePG.doPayment(session, theme).then((result) {
-        if (result != null) {
-          final isSuccess = result['txStatus'] == 'SUCCESS';
-          context.read<CheckoutBloc>().add(
-            CheckoutOnlinePaymentCompleted(
-              paymentId: payment.id,
-              isSuccess: isSuccess,
-            ),
-          );
-        } else {
-          context.read<CheckoutBloc>().add(
-            CheckoutOnlinePaymentCompleted(
-              paymentId: payment.id,
-              isSuccess: false,
-            ),
-          );
-        }
-      });
-    }
+    context.read<CheckoutBloc>().add(
+      CheckoutOnlinePaymentCompleted(payment: payment, isSuccess: true),
+    );
   }
 
   void _showCashPaymentConfirmation(
     CheckoutCashPaymentConfirmationState state,
+    ThemeData theme,
   ) {
     showDialog(
       context: context,
@@ -308,19 +281,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  context.pop();
                   context.read<CheckoutBloc>().add(const CheckoutReset());
                 },
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
-                  context.read<CheckoutBloc>().add(
-                    CheckoutCashPaymentConfirmed(
-                      paymentId: state.payment.paymentId,
-                    ),
-                  );
+                  context.pop();
+                  // context.read<CheckoutBloc>().add(
+                  //   CheckoutOrderConfirmed(payment: state.payment),
+                  // );
                 },
                 child: const Text('Confirm Payment'),
               ),
@@ -338,41 +309,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     showDialog(
       context: context,
       builder:
-          (context) => ErrorDialog(
-            message: message,
-            onRetry: () {
-              context.read<CheckoutBloc>().add(const CheckoutRetryPayment());
-            },
+          (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  context.read<CheckoutBloc>().add(
+                    CheckoutRetryPayment(agentId: widget.agentId),
+                  );
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Retry'),
+              ),
+            ],
           ),
     );
-  }
-
-  void _handleProceedToPayment(CheckoutLoadedState state) {
-    if (state.selectedPaymentMode == PaymentMode.cash) {
-      // For cash payments, show confirmation directly
-      context.read<CheckoutBloc>().add(
-        CheckoutCashPaymentConfirmed(paymentId: state.payment.paymentId),
-      );
-    } else {
-      // Create payment for online mode
-      context.read<CheckoutBloc>().add(
-        CheckoutPaymentCreated(
-          amount: state.totalAmount,
-          paymentMode: state.selectedPaymentMode!,
-        ),
-      );
-    }
-  }
-
-  bool _canProceedToPayment(CheckoutLoadedState state) {
-    return state.selectedPaymentMode != null &&
-        state.selectedAgentId != null &&
-        state.cartItems.isNotEmpty;
   }
 
   bool _isLoading(CheckoutState state) {
     return state is CheckoutPaymentCreatingState ||
         state is CheckoutOrderCreatingState ||
         state is CheckoutOnlinePaymentInProgressState;
+  }
+
+  Widget _buildSectionTitle(String title, ThemeData theme) {
+    return Text(
+      title,
+      style: theme.textTheme.titleMedium!.copyWith(
+        color: AppColors.textPrimary,
+        fontWeight: FontWeight.w600,
+      ),
+    );
   }
 }

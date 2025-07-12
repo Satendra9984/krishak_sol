@@ -2,9 +2,9 @@
 import 'dart:convert';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
 import 'package:bhoomi_sakti/app/core/network/api_client.dart';
-
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_status.dart';
 import '../models/payment_model.dart';
-import '../../domain/entities/payment_entity.dart';
 
 abstract class PaymentRemoteDataSource {
   Future<PaymentModel> createPayment({
@@ -33,14 +33,18 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
     try {
       final response = await apiClient.post(
         '/payments',
-        data: jsonEncode({
-          'amount': amount,
-          'paymentMode': paymentMode == PaymentMode.online ? 'ONLINE' : 'CASH',
-        }),
+        data: {'amount': amount, 'paymentMode': paymentMode.value},
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.data);
+        print(response.data);
+        final Map<String, dynamic> jsonResponse = {
+          'paymentId': response.data['paymentId'],
+          'amount': response.data['amount'] ?? amount,
+          'paymentMode': response.data['paymentMode'] ?? paymentMode.value,
+          'status': response.data['status'] ?? PaymentStatus.pending,
+          'cashfreeOrderResponse': response.data['cashfreeOrderResponse'],
+        };
         return PaymentModel.fromJson(jsonResponse);
       } else {
         throw ServerException(
@@ -68,9 +72,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
       // Simulate API call
       final response = await apiClient.post(
         '/payments/$paymentId/status',
-        data: jsonEncode({
-          'status': status == PaymentStatus.completed ? 'COMPLETED' : 'PENDING',
-        }),
+        data: {'status': status.value},
       );
 
       if (response.statusCode == null ||
@@ -95,7 +97,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
       final response = await apiClient.get('/payments/$paymentId');
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonResponse = jsonDecode(response.data);
+        final Map<String, dynamic> jsonResponse = response.data;
         return PaymentModel.fromJson(jsonResponse);
       } else {
         throw ServerException(

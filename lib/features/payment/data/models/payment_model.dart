@@ -1,5 +1,7 @@
 import 'package:bhoomi_sakti/features/payment/data/models/cashfree_response_model.dart';
 import 'package:bhoomi_sakti/features/payment/domain/entities/payment_entity.dart';
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_status.dart';
 
 class PaymentModel extends PaymentEntity {
   const PaymentModel({
@@ -29,8 +31,8 @@ class PaymentModel extends PaymentEntity {
     return {
       'paymentId': paymentId,
       'amount': amount,
-      'paymentMode': paymentMode == PaymentMode.online ? 'ONLINE' : 'CASH',
-      'status': status == PaymentStatus.completed ? 'COMPLETED' : 'PENDING',
+      'paymentMode': paymentMode.value,
+      'status': status.value,
       'cashfreeOrderResponse':
           cashfreeOrderResponse != null
               ? (cashfreeOrderResponse as CashfreeOrderResponseModel).toJson()
@@ -40,10 +42,8 @@ class PaymentModel extends PaymentEntity {
 
   static PaymentMode _paymentModeFromString(String mode) {
     switch (mode.toUpperCase()) {
-      case 'ONLINE':
-        return PaymentMode.online;
-      case 'CASH':
-        return PaymentMode.cash;
+      case 'ONLINE' || 'CASH':
+        return PaymentMode.fromString(mode);
       default:
         return PaymentMode.cash;
     }
@@ -51,10 +51,8 @@ class PaymentModel extends PaymentEntity {
 
   static PaymentStatus _paymentStatusFromString(String status) {
     switch (status.toUpperCase()) {
-      case 'COMPLETED':
-        return PaymentStatus.completed;
-      case 'PENDING':
-        return PaymentStatus.pending;
+      case 'COMPLETED' || 'PENDING':
+        return PaymentStatus.fromString(status);
       default:
         return PaymentStatus.pending;
     }

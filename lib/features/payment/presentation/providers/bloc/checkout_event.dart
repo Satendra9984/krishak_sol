@@ -36,33 +36,31 @@ class CheckoutPaymentCreated extends CheckoutEvent {
 }
 
 class CheckoutOnlinePaymentCompleted extends CheckoutEvent {
-  final int paymentId;
+  final PaymentEntity payment;
   final bool isSuccess;
 
   const CheckoutOnlinePaymentCompleted({
-    required this.paymentId,
+    required this.payment,
     required this.isSuccess,
   });
 
   @override
-  List<Object?> get props => [paymentId, isSuccess];
+  List<Object?> get props => [payment, isSuccess];
 }
 
-class CheckoutCashPaymentConfirmed extends CheckoutEvent {
-  final int paymentId;
-  final CartEntity cart;
+class CheckoutOrderConfirmed extends CheckoutEvent {
+  final PaymentEntity payment;
 
-  const CheckoutCashPaymentConfirmed({
-    required this.paymentId,
-    required this.cart,
-  });
+  const CheckoutOrderConfirmed({required this.payment});
 
   @override
-  List<Object?> get props => [paymentId, cart];
+  List<Object?> get props => [payment];
 }
 
 class CheckoutRetryPayment extends CheckoutEvent {
-  const CheckoutRetryPayment();
+  final String agentId;
+
+  const CheckoutRetryPayment({required this.agentId});
 }
 
 class CheckoutReset extends CheckoutEvent {

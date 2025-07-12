@@ -1,10 +1,10 @@
 import 'package:bhoomi_sakti/features/cart/cart_providers.dart';
-import 'package:bhoomi_sakti/features/cart/presentation/payment_option_sheet.dart';
 import 'package:bhoomi_sakti/features/cart/presentation/widget/cart_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:bhoomi_sakti/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class CartPage extends ConsumerWidget {
   const CartPage({super.key});
@@ -89,27 +89,13 @@ class CartPage extends ConsumerWidget {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                /* Now it should open modal bottom sheet
-                  which will have two options:
-                  1. Online
-                  2. COD
-                */
-                _showPaymentOptions(context);
+                context.push('/cart/checkout/36', extra: state.cart);
               },
               child: const Text('Proceed to Checkout'),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  void _showPaymentOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return const PaymentOptionSheet();
-      },
     );
   }
 }

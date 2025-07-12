@@ -5,7 +5,6 @@ import 'package:bhoomi_sakti/app/core/usecases/usecase.dart';
 import 'package:bhoomi_sakti/features/cart/domain/entities/cart_entity.dart';
 import 'package:bhoomi_sakti/features/cart/domain/entities/cart_item_entity.dart';
 import 'package:bhoomi_sakti/features/cart/domain/usecases/get_cart_usecase.dart';
-import 'package:bhoomi_sakti/features/orders/domain/entities/order.dart';
 import 'package:bhoomi_sakti/features/orders/domain/usecases/create_order_usecase.dart';
 import 'package:bhoomi_sakti/features/payment/domain/entities/payment_entity.dart';
 import 'package:bhoomi_sakti/features/payment/domain/utils/payment_calculator.dart';
@@ -14,6 +13,8 @@ import 'package:equatable/equatable.dart';
 import 'package:bhoomi_sakti/features/payment/domain/usecases/create_payment_usecase.dart';
 import 'package:bhoomi_sakti/features/payment/domain/usecases/update_payment_status_usecase.dart';
 
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_status.dart';
 part 'checkout_event.dart';
 part 'checkout_state.dart';
 
@@ -35,7 +36,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     on<CheckoutPaymentMethodSelected>(_onPaymentMethodSelected);
     on<CheckoutPaymentCreated>(_onPaymentCreated);
     on<CheckoutOnlinePaymentCompleted>(_onOnlinePaymentCompleted);
-    on<CheckoutCashPaymentConfirmed>(_onCashPaymentConfirmed);
+    on<CheckoutOrderConfirmed>(_onConfirmOrder);
     on<CheckoutRetryPayment>(_onRetryPayment);
     on<CheckoutReset>(_onReset);
   }
@@ -49,39 +50,31 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
   ) async {
     emit(const CheckoutLoadingState());
 
-    try {
-      final cartResult = await getCartItemsUseCase.call(NoParams());
+    final cartResult = await getCartItemsUseCase.call(NoParams());
 
-      await cartResult.fold(
-        (failure) async {
-          emit(
-            CheckoutErrorState(
-              message: _mapFailureToMessage(failure),
-              failure: failure,
-            ),
-          );
-        },
-        (cartItems) async {
-          final totalAmount = paymentCalculator.calculateTotal(cartItems.items);
-
-          agentId = event.agentId;
-          cart = cartItems;
-
-          emit(
-            CheckoutLoadedState(
-              cartItems: cartItems.items,
-              totalAmount: totalAmount,
-            ),
-          );
-        },
-      );
-    } catch (e) {
-      emit(
-        CheckoutErrorState(
-          message: 'An unexpected error occurred: ${e.toString()}',
-        ),
-      );
-    }
+    await cartResult.fold(
+      (failure) async {
+        emit(
+          CheckoutErrorState(
+            message: _mapFailureToMessage(failure),
+            failure: failure,
+          ),
+        );
+      },
+      (cartItems) async {
+        final totalAmount = paymentCalculator.calculateTotal(cartItems.items);
+        cart = cartItems;
+        agentId = event.agentId;
+        emit(
+          CheckoutLoadedState(
+            cartItems: cartItems.items,
+            totalAmount: totalAmount,
+            selectedAgentId: int.parse(event.agentId),
+            selectedPaymentMode: null,
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _onPaymentMethodSelected(
@@ -108,7 +101,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       (failure) {
         emit(
           CheckoutErrorState(
-            message: _mapFailureToMessage(failure),
+            message: 'onPaymentCreated' + _mapFailureToMessage(failure),
             failure: failure,
           ),
         );
@@ -129,7 +122,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       // Update payment status to completed
       final updateResult = await updatePaymentStatusUseCase(
         UpdatePaymentStatusParams(
-          paymentId: event.paymentId,
+          paymentId: event.payment.paymentId,
           status: PaymentStatus.completed,
         ),
       );
@@ -146,6 +139,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
         (_) {
           // Payment status updated successfully
           // Navigate to orders screen (handled by UI)
+          add(CheckoutOrderConfirmed(payment: event.payment));
           emit(const CheckoutSuccessState());
         },
       );
@@ -153,7 +147,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       // Payment failed, update status accordingly
       final updateResult = await updatePaymentStatusUseCase(
         UpdatePaymentStatusParams(
-          paymentId: event.paymentId,
+          paymentId: event.payment.paymentId,
           status: PaymentStatus.failed,
         ),
       );
@@ -178,8 +172,8 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     }
   }
 
-  Future<void> _onCashPaymentConfirmed(
-    CheckoutCashPaymentConfirmed event,
+  Future<void> _onConfirmOrder(
+    CheckoutOrderConfirmed event,
     Emitter<CheckoutState> emit,
   ) async {
     emit(const CheckoutOrderCreatingState());
@@ -187,7 +181,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     final result = await createOrderUseCase(
       CreateOrderParams(
         cart: cart!,
-        paymentId: event.paymentId,
+        paymentId: event.payment.paymentId,
         agentId: int.parse(agentId!),
       ),
     );
@@ -196,7 +190,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       (failure) {
         emit(
           CheckoutErrorState(
-            message: _mapFailureToMessage(failure),
+            message: 'onConfirmOrder' + _mapFailureToMessage(failure),
             failure: failure,
           ),
         );
@@ -211,13 +205,14 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     CheckoutRetryPayment event,
     Emitter<CheckoutState> emit,
   ) async {
-    add(CheckoutInitialize(agentId: agentId!));
+    add(CheckoutInitialize(agentId: event.agentId));
   }
 
   Future<void> _onReset(
     CheckoutReset event,
     Emitter<CheckoutState> emit,
   ) async {
+    cart = null;
     emit(const CheckoutInitialState());
   }
 

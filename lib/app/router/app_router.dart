@@ -1,5 +1,7 @@
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
-import 'package:bhoomi_sakti/features/payment/presentation/payment_page.dart';
+import 'package:bhoomi_sakti/features/payment/payments_providers.dart';
+import 'package:bhoomi_sakti/features/payment/presentation/pages/checkout_page.dart';
+import 'package:bhoomi_sakti/features/payment/presentation/pages/payment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -96,8 +98,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const CartPage(),
                 routes: [
                   GoRoute(
-                    path: AppRoutePaths.payment,
-                    builder: (context, state) => const PaymentPage(),
+                    path: AppRoutePaths.checkout,
+                    builder: (context, state) {
+                      final agentId = state.pathParameters['agentId'] as String;
+                      return BlocProvider(
+                        create: (context) => ref.watch(checkoutBlocProvider),
+                        child: CheckoutScreen(agentId: agentId),
+                      );
+                    },
                   ),
                 ],
               ),

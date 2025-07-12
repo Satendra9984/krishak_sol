@@ -5,6 +5,8 @@ import 'package:bhoomi_sakti/features/payment/domain/repository/payment_reposito
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 
+import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
+
 class CreatePaymentUseCase
     extends FutureUseCase<PaymentEntity, CreatePaymentParams> {
   final PaymentRepository repository;

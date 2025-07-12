@@ -24,7 +24,7 @@ final orderRemoteDataSourceProvider = Provider<OrdersRemoteDataSource>((ref) {
 final orderRepositoryProvider = Provider<OrdersRepository>((ref) {
   return OrdersRepositoryImpl(
     remoteDataSource: ref.watch(orderRemoteDataSourceProvider),
-    networkInfo: ref.watch(networkInfoProvider),
+    // networkInfo: ref.watch(networkInfoProvider),
   );
 });
 

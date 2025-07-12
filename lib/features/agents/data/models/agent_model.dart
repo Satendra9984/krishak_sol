@@ -1,4 +1,4 @@
-import 'package:bhoomi_sakti/features/agents/domain/agent_entity.dart';
+import 'package:bhoomi_sakti/features/agents/domain/entities/agent_entity.dart';
 
 class AgentModel extends Agent {
   const AgentModel({
