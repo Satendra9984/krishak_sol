@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 enum PaymentMode { cash, online }
 
-enum PaymentStatus { pending, completed }
+enum PaymentStatus { pending, completed, failed }
 
 class PaymentEntity extends Equatable {
   final int paymentId;

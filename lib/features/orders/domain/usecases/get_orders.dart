@@ -27,7 +27,7 @@ class GetOrders implements FutureUseCase<List<OrderEntity>, GetOrdersParams> {
   GetOrders(this.repository);
 
   @override
-  Future<Either<AppFailure, List<OrderEntity>>> call(
+  Future<Either<Failure, List<OrderEntity>>> call(
     GetOrdersParams params,
   ) async {
     return await repository.getOrders(

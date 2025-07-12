@@ -11,7 +11,7 @@ class GetOrderById implements FutureUseCase<OrderEntity, int> {
   GetOrderById(this.repository);
 
   @override
-  Future<Either<AppFailure, OrderEntity>> call(int orderId) async {
+  Future<Either<Failure, OrderEntity>> call(int orderId) async {
     return await repository.getOrderById(orderId);
   }
 }

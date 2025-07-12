@@ -6,7 +6,7 @@ import '../../../../app/core/error/app_failures.dart';
 
 abstract class OrdersRepository {
   Future<Either<Failure, OrderEntity>> createOrder({
-    required List<CartEntity> items,
+    required CartEntity cart,
     required int paymentId,
     required int agentId,
   });

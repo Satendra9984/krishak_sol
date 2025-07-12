@@ -10,7 +10,7 @@ class CancelOrder implements FutureUseCase<OrderEntity, int> {
   CancelOrder(this.repository);
 
   @override
-  Future<Either<AppFailure, OrderEntity>> call(int orderId) async {
+  Future<Either<Failure, OrderEntity>> call(int orderId) async {
     return await repository.cancelOrder(orderId);
   }
 }

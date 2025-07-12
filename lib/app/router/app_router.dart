@@ -1,4 +1,5 @@
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
+import 'package:bhoomi_sakti/features/payment/presentation/payment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -63,9 +64,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path:
-                    AppRoutePaths
-                        .dashboard, // This should be the root path for the shell
+                path: AppRoutePaths.dashboard,
                 builder: (context, state) => const DashboardScreen(),
               ),
             ],
@@ -95,6 +94,12 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: AppRoutePaths.cart,
                 builder: (context, state) => const CartPage(),
+                routes: [
+                  GoRoute(
+                    path: AppRoutePaths.payment,
+                    builder: (context, state) => const PaymentPage(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -108,6 +113,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+
+        // Payment Branch
       ),
     ],
     // errorBuilder: (context, state) => ErrorScreen(error: state.error),

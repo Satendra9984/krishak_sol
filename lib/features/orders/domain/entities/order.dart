@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'order_item.dart';
 
-class Order extends Equatable {
+class OrderEntity extends Equatable {
   final int orderId;
   final double totalAmount;
   final String paymentStatus;
@@ -16,7 +16,7 @@ class Order extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  const Order({
+  const OrderEntity({
     required this.orderId,
     required this.totalAmount,
     required this.paymentStatus,
