@@ -101,8 +101,8 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                     path: AppRoutePaths.checkout,
                     builder: (context, state) {
                       final agentId = state.pathParameters['agentId'] as String;
-                      return BlocProvider(
-                        create: (context) => ref.watch(checkoutBlocProvider),
+                      return BlocProvider.value(
+                        value: ref.read(checkoutBlocProvider),
                         child: CheckoutScreen(agentId: agentId),
                       );
                     },

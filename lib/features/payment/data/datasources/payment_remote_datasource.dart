@@ -33,16 +33,18 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
     try {
       final response = await apiClient.post(
         '/payments',
-        data: {'amount': amount, 'paymentMode': paymentMode.value},
+        data: {
+          'amount': amount,
+          'paymentMode': paymentMode.value.toUpperCase(),
+        },
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        print(response.data);
         final Map<String, dynamic> jsonResponse = {
           'paymentId': response.data['paymentId'],
           'amount': response.data['amount'] ?? amount,
           'paymentMode': response.data['paymentMode'] ?? paymentMode.value,
-          'status': response.data['status'] ?? PaymentStatus.pending,
+          'status': response.data['status'] ?? PaymentStatus.pending.value,
           'cashfreeOrderResponse': response.data['cashfreeOrderResponse'],
         };
         return PaymentModel.fromJson(jsonResponse);
@@ -53,6 +55,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
         );
       }
     } catch (e) {
+      e;
       if (e is ServerException) {
         rethrow;
       }

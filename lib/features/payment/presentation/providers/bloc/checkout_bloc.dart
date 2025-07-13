@@ -4,6 +4,7 @@ import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/app/core/usecases/usecase.dart';
 import 'package:bhoomi_sakti/features/cart/domain/entities/cart_entity.dart';
 import 'package:bhoomi_sakti/features/cart/domain/entities/cart_item_entity.dart';
+import 'package:bhoomi_sakti/features/cart/domain/usecases/clear_cart_usecase.dart';
 import 'package:bhoomi_sakti/features/cart/domain/usecases/get_cart_usecase.dart';
 import 'package:bhoomi_sakti/features/orders/domain/usecases/create_order_usecase.dart';
 import 'package:bhoomi_sakti/features/payment/domain/entities/payment_entity.dart';
@@ -23,6 +24,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
   final CreateOrderUseCase createOrderUseCase;
   final UpdatePaymentStatusUseCase updatePaymentStatusUseCase;
   final GetCartUsecase getCartItemsUseCase;
+  final ClearCartUsecase clearCartUseCase;
   final PaymentCalculator paymentCalculator;
 
   CheckoutBloc({
@@ -30,6 +32,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     required this.createOrderUseCase,
     required this.updatePaymentStatusUseCase,
     required this.getCartItemsUseCase,
+    required this.clearCartUseCase,
     required this.paymentCalculator,
   }) : super(const CheckoutInitialState()) {
     on<CheckoutInitialize>(_onInitialize);
@@ -197,6 +200,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
       },
       (order) {
         emit(const CheckoutSuccessState());
+        clearCartUseCase.call(NoParams());
       },
     );
   }
@@ -213,6 +217,7 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     Emitter<CheckoutState> emit,
   ) async {
     cart = null;
+    agentId = null;
     emit(const CheckoutInitialState());
   }
 

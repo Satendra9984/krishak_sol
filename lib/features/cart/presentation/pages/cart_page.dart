@@ -89,7 +89,7 @@ class CartPage extends ConsumerWidget {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                context.push('/cart/checkout/36', extra: state.cart);
+                context.push('/cart/checkout/3', extra: state.cart);
               },
               child: const Text('Proceed to Checkout'),
             ),

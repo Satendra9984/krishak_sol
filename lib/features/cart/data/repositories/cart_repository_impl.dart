@@ -57,4 +57,14 @@ class CartRepositoryImpl implements CartRepository {
       return left(const AppFailure('Failed to update quantity'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> clearCart() async {
+    try {
+      await cartLocalDataSource.clearCart();
+      return right(unit);
+    } catch (e) {
+      return left(const AppFailure('Failed to clear cart'));
+    }
+  }
 }

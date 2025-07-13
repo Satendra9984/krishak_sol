@@ -42,11 +42,18 @@ final paymentCalculatorProvider = Provider<PaymentCalculator>((ref) {
 });
 
 final checkoutBlocProvider = Provider<CheckoutBloc>((ref) {
-  return CheckoutBloc(
+  final bloc = CheckoutBloc(
     createPaymentUseCase: ref.watch(createPaymentUsecaseProvider),
     updatePaymentStatusUseCase: ref.watch(updatePaymentStatusUsecaseProvider),
     paymentCalculator: ref.watch(paymentCalculatorProvider),
     createOrderUseCase: ref.watch(createOrderUseCaseProvider),
     getCartItemsUseCase: ref.watch(getCartUsecaseProvider),
+    clearCartUseCase: ref.watch(clearCartUsecaseProvider),
   );
+
+  ref.onDispose(() {
+    bloc.close();
+  });
+
+  return bloc;
 });

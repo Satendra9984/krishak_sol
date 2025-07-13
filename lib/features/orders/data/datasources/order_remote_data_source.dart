@@ -36,7 +36,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
   }) async {
     try {
       final response = await apiClient.post(
-        '/orders',
+        '/orders/',
         data: {
           'items':
               cart.items

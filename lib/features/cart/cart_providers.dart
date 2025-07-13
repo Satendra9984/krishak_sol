@@ -2,6 +2,7 @@ import 'package:bhoomi_sakti/features/cart/data/datasources/cart_local_data_sour
 import 'package:bhoomi_sakti/features/cart/data/repositories/cart_repository_impl.dart';
 import 'package:bhoomi_sakti/features/cart/domain/repositories/cart_repository.dart';
 import 'package:bhoomi_sakti/features/cart/domain/usecases/add_product_to_cart_usecase.dart';
+import 'package:bhoomi_sakti/features/cart/domain/usecases/clear_cart_usecase.dart';
 import 'package:bhoomi_sakti/features/cart/domain/usecases/get_cart_usecase.dart';
 import 'package:bhoomi_sakti/features/cart/domain/usecases/remove_product_from_cart_usecase.dart';
 import 'package:bhoomi_sakti/features/cart/domain/usecases/update_cart_item_quantity_usecase.dart';
@@ -38,6 +39,10 @@ final updateCartItemQuantityUsecaseProvider =
     Provider<UpdateCartItemQuantityUsecase>((ref) {
       return UpdateCartItemQuantityUsecase(ref.watch(cartRepositoryProvider));
     });
+
+final clearCartUsecaseProvider = Provider<ClearCartUsecase>((ref) {
+  return ClearCartUsecase(ref.watch(cartRepositoryProvider));
+});
 
 // Presentation Layer (BLoC) Provider
 final cartBlocProvider = Provider.autoDispose<CartBloc>((ref) {

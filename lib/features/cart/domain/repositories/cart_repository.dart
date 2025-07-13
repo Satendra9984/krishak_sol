@@ -12,4 +12,6 @@ abstract class CartRepository {
     String productId,
     int newQuantity,
   );
+
+  Future<Either<Failure, void>> clearCart();
 }

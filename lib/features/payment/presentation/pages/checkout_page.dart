@@ -1,7 +1,9 @@
 // lib/features/checkout/presentation/screens/checkout_screen.dart
 
 import 'package:bhoomi_sakti/app/config/theme/app_colors.dart';
+import 'package:bhoomi_sakti/features/cart/cart_providers.dart';
 import 'package:bhoomi_sakti/features/payment/domain/entities/payment_entity.dart';
+import 'package:bhoomi_sakti/features/payment/payments_providers.dart';
 import 'package:bhoomi_sakti/features/payment/presentation/providers/bloc/checkout_bloc.dart';
 import 'package:bhoomi_sakti/features/payment/presentation/widgets/checkout_app.dart';
 import 'package:bhoomi_sakti/features/payment/presentation/widgets/checkout_bottom_bar.dart';
@@ -12,27 +14,31 @@ import 'package:bhoomi_sakti/features/payment/presentation/widgets/payments_sele
 import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 // import 'package:flutter_cashfree_pg_sdk/api/cfsession/cfsession.dart';
 // import 'package:flutter_cashfree_pg_sdk/api/cftheme/cftheme.dart';
 // import 'package:flutter_cashfree_pg_sdk/utils/cfenums.dart';
 
-class CheckoutScreen extends StatefulWidget {
+class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({Key? key, required this.agentId}) : super(key: key);
 
   final String agentId;
 
   @override
-  State<CheckoutScreen> createState() => _CheckoutScreenState();
+  ConsumerState<CheckoutScreen> createState() => _CheckoutScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
+class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<CheckoutBloc>().add(
-      CheckoutInitialize(agentId: widget.agentId),
-    );
+    // Initialize through Riverpod
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(checkoutBlocProvider)
+          .add(CheckoutInitialize(agentId: widget.agentId));
+    });
   }
 
   @override
@@ -43,6 +49,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       backgroundColor: AppColors.background,
       appBar: const CheckoutAppBar(),
       body: BlocConsumer<CheckoutBloc, CheckoutState>(
+        bloc: ref.watch(checkoutBlocProvider),
         listener: (context, state) {
           _handleStateChanges(context, state, theme);
         },
@@ -56,18 +63,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         },
       ),
       bottomNavigationBar: BlocBuilder<CheckoutBloc, CheckoutState>(
+        bloc: ref.watch(checkoutBlocProvider),
         builder: (context, state) {
           if (state is CheckoutLoadedState) {
             return CheckoutBottomBar(
               totalAmount: state.totalAmount,
               selectedPaymentMode: state.selectedPaymentMode,
               onProceedToPayment: () {
-                context.read<CheckoutBloc>().add(
-                  CheckoutPaymentCreated(
-                    amount: state.totalAmount,
-                    paymentMode: state.selectedPaymentMode!,
-                  ),
-                );
+                ref
+                    .read(checkoutBlocProvider)
+                    .add(
+                      CheckoutPaymentCreated(
+                        amount: state.totalAmount,
+                        paymentMode: state.selectedPaymentMode!,
+                      ),
+                    );
               },
               isEnabled:
                   state.selectedPaymentMode != null &&
@@ -110,6 +120,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         child: CircularProgressIndicator(),
       ),
       CheckoutLoadedState() => _buildCheckoutContent(state, theme),
+      CheckoutSuccessState() => _buildCheckoutSuccessContent(state, theme),
       CheckoutErrorState() => _buildErrorContent(state, theme),
       CheckoutPaymentFailedState() => _buildPaymentFailedContent(state, theme),
       _ => const SizedBox.shrink(),
@@ -135,9 +146,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           PaymentMethodSelector(
             selectedPaymentMode: state.selectedPaymentMode,
             onPaymentModeSelected: (paymentMode) {
-              context.read<CheckoutBloc>().add(
-                CheckoutPaymentMethodSelected(paymentMode: paymentMode),
-              );
+              ref
+                  .read(checkoutBlocProvider)
+                  .add(CheckoutPaymentMethodSelected(paymentMode: paymentMode));
             },
           ),
 
@@ -158,6 +169,41 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 100), // Space for bottom bar
         ],
       ),
+    );
+  }
+
+  Widget _buildCheckoutSuccessContent(
+    CheckoutSuccessState state,
+    ThemeData data,
+  ) {
+    return Column(
+      children: [
+        Icon(Icons.check_circle, size: 64, color: AppColors.success),
+        const SizedBox(height: 16),
+        Text(
+          'Order Placed Successfully',
+          style: data.textTheme.titleMedium!.copyWith(
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        // back or go to orders screen
+        ElevatedButton(
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            }
+          },
+          child: const Text('Back to Home'),
+        ),
+
+        ElevatedButton(
+          onPressed: () {
+            context.go('/orders');
+          },
+          child: const Text('Go to Orders'),
+        ),
+      ],
     );
   }
 
@@ -185,15 +231,37 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              context.read<CheckoutBloc>().add(
-                CheckoutRetryPayment(agentId: widget.agentId),
-              );
+              ref
+                  .read(checkoutBlocProvider)
+                  .add(CheckoutRetryPayment(agentId: widget.agentId));
             },
             child: const Text('Retry'),
           ),
         ],
       ),
     );
+  }
+
+  void _handlePaymentCreated(
+    CheckoutPaymentCreatedState state,
+    ThemeData theme,
+  ) {
+    if (state.payment.paymentMode == PaymentMode.online) {
+      _initiateOnlinePayment(state.payment, theme);
+    } else {
+      // For cash payments, show confirmation screen
+      // This will be handled by the bloc state change
+      // _showCashPaymentConfirmation(state, theme);
+      ref
+          .read(checkoutBlocProvider)
+          .add(CheckoutOrderConfirmed(payment: state.payment));
+    }
+  }
+
+  void _initiateOnlinePayment(PaymentEntity payment, ThemeData theme) {
+    ref
+        .read(checkoutBlocProvider)
+        .add(CheckoutOnlinePaymentCompleted(payment: payment, isSuccess: true));
   }
 
   Widget _buildPaymentFailedContent(
@@ -223,9 +291,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: () {
-              context.read<CheckoutBloc>().add(
-                CheckoutRetryPayment(agentId: widget.agentId),
-              );
+              ref
+                  .read(checkoutBlocProvider)
+                  .add(CheckoutRetryPayment(agentId: widget.agentId));
             },
             child: const Text('Try Again'),
           ),
@@ -234,75 +302,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  void _handlePaymentCreated(
-    CheckoutPaymentCreatedState state,
-    ThemeData theme,
-  ) {
-    if (state.payment.paymentMode == PaymentMode.online) {
-      _initiateOnlinePayment(state.payment, theme);
-    } else {
-      // For cash payments, show confirmation screen
-      // This will be handled by the bloc state change
-      // _showCashPaymentConfirmation(state, theme);
-      context.read<CheckoutBloc>().add(
-        CheckoutOrderConfirmed(payment: state.payment),
-      );
-    }
-  }
-
-  void _initiateOnlinePayment(PaymentEntity payment, ThemeData theme) {
-    context.read<CheckoutBloc>().add(
-      CheckoutOnlinePaymentCompleted(payment: payment, isSuccess: true),
-    );
-  }
-
-  void _showCashPaymentConfirmation(
-    CheckoutCashPaymentConfirmationState state,
-    ThemeData theme,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Confirm Cash Payment'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Total Amount: ₹${state.payment.amount.toStringAsFixed(2)}',
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Please confirm that the cash payment has been received.',
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  context.pop();
-                  context.read<CheckoutBloc>().add(const CheckoutReset());
-                },
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  context.pop();
-                  // context.read<CheckoutBloc>().add(
-                  //   CheckoutOrderConfirmed(payment: state.payment),
-                  // );
-                },
-                child: const Text('Confirm Payment'),
-              ),
-            ],
-          ),
-    );
-  }
-
   void _handleCheckoutSuccess(CheckoutSuccessState state) {
     // Navigate to orders screen
-    Navigator.of(context).pushReplacementNamed('/orders');
+    // todo: show success message and option to go to orders screen
+    // show snackbar
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Order placed successfully')));
+    // clear cart
+    ref.read(checkoutBlocProvider).add(const CheckoutReset());
+
+    if (context.canPop()) {
+      context.pop();
+    }
   }
 
   void _showErrorDialog(String message) {

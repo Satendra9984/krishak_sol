@@ -10,6 +10,7 @@ abstract class CartLocalDataSource {
   Future<void> addProductToCart(ProductEntity product);
   Future<void> removeProductFromCart(String productId);
   Future<void> updateQuantity(String productId, int newQuantity);
+  Future<void> clearCart();
 }
 
 class CartLocalDataSourceImpl implements CartLocalDataSource {
@@ -72,5 +73,10 @@ class CartLocalDataSourceImpl implements CartLocalDataSource {
       );
       _cart.add(CartEntity(items: updatedItems));
     }
+  }
+
+  @override
+  Future<void> clearCart() async {
+    _cart.add(const CartEntity());
   }
 }
