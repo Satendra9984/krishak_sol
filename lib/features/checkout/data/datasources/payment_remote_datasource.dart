@@ -2,8 +2,8 @@
 import 'dart:convert';
 import 'package:bhoomi_sakti/app/core/error/app_exceptions.dart';
 import 'package:bhoomi_sakti/app/core/network/api_client.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_status.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_mode.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_status.dart';
 import '../models/payment_model.dart';
 
 abstract class PaymentRemoteDataSource {
@@ -73,19 +73,19 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
       await Future.delayed(const Duration(seconds: 1));
 
       // Simulate API call
-      final response = await apiClient.post(
-        '/payments/$paymentId/status',
-        data: {'status': status.value},
-      );
+      // final response = await apiClient.post(
+      //   '/payments/$paymentId/status',
+      //   data: {'status': status.value},
+      // );
 
-      if (response.statusCode == null ||
-          response.statusCode! < 200 ||
-          response.statusCode! >= 300) {
-        throw ServerException(
-          message: 'Failed to update payment status',
-          code: response.statusCode.toString(),
-        );
-      }
+      // if (response.statusCode == null ||
+      //     response.statusCode! < 200 ||
+      //     response.statusCode! >= 300) {
+      //   throw ServerException(
+      //     message: 'Failed to update payment status',
+      //     code: response.statusCode.toString(),
+      //   );
+      // }
     } catch (e) {
       if (e is ServerException) {
         rethrow;

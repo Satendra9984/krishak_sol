@@ -18,6 +18,8 @@ class AppRoutePaths {
   static const String checkout = 'checkout/:agentId';
   static const String payment = '/payment';
   static const String profile = '/profile';
+  static const String orders = '/orders';
+  static const String orderDetails = 'order/:orderId';
   static const String settings = '/settings';
 
   // Farmer module routes

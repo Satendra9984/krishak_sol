@@ -44,8 +44,6 @@ dependencies:
   isar_flutter_libs: ^3.1.0+1 # Peer dependency for Isar
   connectivity_plus: ^6.0.3   # For network status
   fpdart: ^1.1.0              # For functional programming
-  # dartz: ^0.10.1              # For Either, Left, Right functional types
-  path_provider: ^2.1.3       # For finding paths (e.g., for Isar)
   google_fonts: ^6.1.0       # For custom fonts
   flutter_svg: ^2.0.10+1     # For SVG support
   intl: ^0.20.2              # For date formatting
@@ -54,11 +52,13 @@ dependencies:
   equatable: ^2.0.5               # For value equality
   pretty_dio_logger: ^1.4.0        # For pretty logging of Dio HTTP requests
   flutter_secure_storage: ^9.2.4
-  shared_preferences: ^2.2.3 # For storing simple data like onboarding status
   pinput: ^5.0.1
   font_awesome_flutter: ^10.7.0
   flutter_staggered_grid_view: ^0.7.0
   rxdart: ^0.28.0
+  path_provider: 2.0.15
+  shared_preferences: 2.1.2
+  flutter_cashfree_pg_sdk: ^2.2.8+46
 
 dev_dependencies:
   flutter_test:

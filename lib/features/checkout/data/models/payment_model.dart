@@ -1,7 +1,7 @@
-import 'package:bhoomi_sakti/features/payment/data/models/cashfree_response_model.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_entity.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_status.dart';
+import 'package:bhoomi_sakti/features/checkout/data/models/cashfree_response_model.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_entity.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_mode.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_status.dart';
 
 class PaymentModel extends PaymentEntity {
   const PaymentModel({

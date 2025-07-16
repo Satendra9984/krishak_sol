@@ -1,3 +1,4 @@
+import 'package:bhoomi_sakti/features/orders/orders_provider.dart';
 import 'package:bhoomi_sakti/features/orders/presentation/providers/order_state.dart';
 import 'package:bhoomi_sakti/features/orders/presentation/widgets/order_action_selection.dart';
 import 'package:bhoomi_sakti/features/orders/presentation/widgets/order_details_card.dart';
@@ -83,14 +84,16 @@ class _OrderDetailPageState extends ConsumerState<OrderDetailPage> {
   }
 
   _buildOrderDetail(OrderEntity order) {
-    return Column(
-      children: [
-        OrderDetailCard(order: order),
-        const SizedBox(height: 16),
-        OrderStatusTimeline(order: order),
-        const SizedBox(height: 16),
-        OrderActionsSection(order: order),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          OrderDetailCard(order: order),
+          const SizedBox(height: 16),
+          OrderStatusTimeline(order: order),
+          const SizedBox(height: 16),
+          OrderActionsSection(order: order),
+        ],
+      ),
     );
   }
 }

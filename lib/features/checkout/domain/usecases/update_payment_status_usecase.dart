@@ -1,7 +1,7 @@
 import 'package:bhoomi_sakti/app/core/error/app_failures.dart';
 import 'package:bhoomi_sakti/app/core/usecases/usecase.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_status.dart';
-import 'package:bhoomi_sakti/features/payment/domain/repository/payment_repository.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_status.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/repository/payment_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 

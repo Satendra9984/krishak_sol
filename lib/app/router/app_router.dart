@@ -1,7 +1,9 @@
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
-import 'package:bhoomi_sakti/features/payment/payments_providers.dart';
-import 'package:bhoomi_sakti/features/payment/presentation/pages/checkout_page.dart';
-import 'package:bhoomi_sakti/features/payment/presentation/pages/payment_page.dart';
+import 'package:bhoomi_sakti/features/orders/presentation/pages/order_details_page.dart';
+import 'package:bhoomi_sakti/features/orders/presentation/pages/orders_page.dart';
+import 'package:bhoomi_sakti/features/checkout/payments_providers.dart';
+import 'package:bhoomi_sakti/features/checkout/presentation/pages/checkout_page.dart';
+import 'package:bhoomi_sakti/features/checkout/presentation/pages/payment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -111,6 +113,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
               ),
             ],
           ),
+
           // Profile Branch
           StatefulShellBranch(
             routes: <RouteBase>[
@@ -123,6 +126,21 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         ],
 
         // Payment Branch
+      ),
+
+      // orders
+      GoRoute(
+        path: AppRoutePaths.orders,
+        builder: (context, state) => const OrdersPage(),
+        routes: [
+          GoRoute(
+            path: AppRoutePaths.orderDetails,
+            builder: (context, state) {
+              final orderId = state.pathParameters['orderId'] as String;
+              return OrderDetailPage(orderId: int.parse(orderId));
+            },
+          ),
+        ],
       ),
     ],
     // errorBuilder: (context, state) => ErrorScreen(error: state.error),

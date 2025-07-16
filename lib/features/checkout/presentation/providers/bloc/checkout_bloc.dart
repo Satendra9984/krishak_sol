@@ -7,15 +7,15 @@ import 'package:bhoomi_sakti/features/cart/domain/entities/cart_item_entity.dart
 import 'package:bhoomi_sakti/features/cart/domain/usecases/clear_cart_usecase.dart';
 import 'package:bhoomi_sakti/features/cart/domain/usecases/get_cart_usecase.dart';
 import 'package:bhoomi_sakti/features/orders/domain/usecases/create_order_usecase.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_entity.dart';
-import 'package:bhoomi_sakti/features/payment/domain/utils/payment_calculator.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_entity.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/utils/payment_calculator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:bhoomi_sakti/features/payment/domain/usecases/create_payment_usecase.dart';
-import 'package:bhoomi_sakti/features/payment/domain/usecases/update_payment_status_usecase.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/usecases/create_payment_usecase.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/usecases/update_payment_status_usecase.dart';
 
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_mode.dart';
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_status.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_mode.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_status.dart';
 part 'checkout_event.dart';
 part 'checkout_state.dart';
 

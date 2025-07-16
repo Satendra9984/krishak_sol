@@ -1,4 +1,4 @@
-import 'package:bhoomi_sakti/features/payment/domain/entities/payment_entity.dart';
+import 'package:bhoomi_sakti/features/checkout/domain/entities/payment_entity.dart';
 
 class CashfreeOrderResponseModel extends CashfreeOrderResponse {
   const CashfreeOrderResponseModel({

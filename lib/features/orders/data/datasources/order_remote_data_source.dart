@@ -78,9 +78,12 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
       final queryParams = <String, dynamic>{'page': page, 'limit': limit};
 
       if (status != null) queryParams['status'] = status;
-      if (fromDate != null)
+      if (fromDate != null) {
         queryParams['fromDate'] = fromDate.toIso8601String();
-      if (toDate != null) queryParams['toDate'] = toDate.toIso8601String();
+      }
+      if (toDate != null) {
+        queryParams['toDate'] = toDate.toIso8601String();
+      }
 
       final response = await apiClient.get(
         '/orders/',

@@ -1,14 +1,32 @@
+import 'package:bhoomi_sakti/app/core/network/api_client.dart';
+import 'package:bhoomi_sakti/app/core/providers/core_providers.dart';
 import 'package:bhoomi_sakti/features/orders/presentation/pages/order_details_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/order.dart';
 
-class OrderListItem extends StatelessWidget {
+class OrderListItem extends ConsumerStatefulWidget {
   final OrderEntity order;
 
   const OrderListItem({super.key, required this.order});
 
   @override
+  ConsumerState<OrderListItem> createState() => _OrderListItemState();
+}
+
+class _OrderListItemState extends ConsumerState<OrderListItem> {
+  late final ApiClient _apiClient;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _apiClient = ref.read(apiClientProvider);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final order = widget.order;
     return Card(
       child: InkWell(
         onTap: () {
@@ -75,7 +93,7 @@ class OrderListItem extends StatelessWidget {
 
   Widget _buildStatusChip(BuildContext context) {
     Color color;
-    switch (order.orderStatus.toLowerCase()) {
+    switch (widget.order.orderStatus.toLowerCase()) {
       case 'delivered':
         color = Colors.green;
         break;
@@ -100,7 +118,7 @@ class OrderListItem extends StatelessWidget {
         border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
-        order.orderStatus,
+        widget.order.orderStatus,
         style: TextStyle(
           color: color,
           fontSize: 12,
@@ -113,7 +131,7 @@ class OrderListItem extends StatelessWidget {
   Widget _buildOrderItems() {
     return Column(
       children:
-          order.items.take(2).map((item) {
+          widget.order.items.take(2).map((item) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Row(
@@ -125,10 +143,23 @@ class OrderListItem extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                       color: Colors.grey[200],
                     ),
-                    child: const Icon(
-                      Icons.shopping_bag_outlined,
-                      size: 20,
-                      color: Colors.grey,
+                    child: Image.network(
+                      "${_apiClient.baseUrl}/uploads/${item.product.imageUrl}",
+                      height: 200,
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Center(
+                          child: SizedBox(
+                            height: 200,
+                            child: const Icon(Icons.error, color: Colors.red),
+                          ),
+                        );
+                      },
+                      headers: {
+                        'Authorization':
+                            'Bearer ${ref.read(tokenStorageServiceProvider).accessToken}',
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
