@@ -1,0 +1,1 @@
+enum OtpFlowType { login, signup }
