@@ -67,7 +67,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             ref
                 .read(authNotifierProvider.notifier)
                 .setAuthenticatedUser(state.user);
-            context.go(AppRoutePaths.home);
+            context.go(AppRoutePaths.dashboard);
           }
         },
         child: Center(

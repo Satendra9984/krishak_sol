@@ -1,4 +1,9 @@
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
+import 'package:bhoomi_sakti/features/orders/presentation/pages/order_details_page.dart';
+import 'package:bhoomi_sakti/features/orders/presentation/pages/orders_page.dart';
+import 'package:bhoomi_sakti/features/checkout/payments_providers.dart';
+import 'package:bhoomi_sakti/features/checkout/presentation/pages/checkout_page.dart';
+import 'package:bhoomi_sakti/features/checkout/presentation/pages/payment_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +24,7 @@ import 'app_route_paths.dart';
 import 'package:bhoomi_sakti/app/ui/main_scaffold.dart';
 import 'package:bhoomi_sakti/features/cart/presentation/pages/cart_page.dart';
 import 'package:bhoomi_sakti/features/products/presentation/pages/shop_page.dart';
+import 'package:bhoomi_sakti/features/products/presentation/pages/product_details_page.dart';
 import 'package:bhoomi_sakti/features/profile/presentation/pages/profile_page.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -62,9 +68,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path:
-                    AppRoutePaths
-                        .home, // This should be the root path for the shell
+                path: AppRoutePaths.dashboard,
                 builder: (context, state) => const DashboardScreen(),
               ),
             ],
@@ -73,8 +77,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/shop',
+                path: AppRoutePaths.shop,
                 builder: (context, state) => const ShopPage(),
+                routes: [
+                  GoRoute(
+                    path: AppRoutePaths.productDetails,
+                    builder: (context, state) {
+                      final productId =
+                          state.pathParameters['productId'] as String;
+                      return ProductDetailsPage(productId: productId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),
@@ -82,19 +96,49 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/cart',
+                path: AppRoutePaths.cart,
                 builder: (context, state) => const CartPage(),
+                routes: [
+                  GoRoute(
+                    path: AppRoutePaths.checkout,
+                    builder: (context, state) {
+                      final agentId = state.pathParameters['agentId'] as String;
+                      return BlocProvider.value(
+                        value: ref.read(checkoutBlocProvider),
+                        child: CheckoutScreen(agentId: agentId),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),
+
           // Profile Branch
           StatefulShellBranch(
             routes: <RouteBase>[
               GoRoute(
-                path: '/profile',
+                path: AppRoutePaths.profile,
                 builder: (context, state) => const ProfilePage(),
               ),
             ],
+          ),
+        ],
+
+        // Payment Branch
+      ),
+
+      // orders
+      GoRoute(
+        path: AppRoutePaths.orders,
+        builder: (context, state) => const OrdersPage(),
+        routes: [
+          GoRoute(
+            path: AppRoutePaths.orderDetails,
+            builder: (context, state) {
+              final orderId = state.pathParameters['orderId'] as String;
+              return OrderDetailPage(orderId: int.parse(orderId));
+            },
           ),
         ],
       ),

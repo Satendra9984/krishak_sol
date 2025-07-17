@@ -1,17 +1,44 @@
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
+import 'package:bhoomi_sakti/features/cart/cart_providers.dart';
 import 'package:bhoomi_sakti/features/products/domain/entities/product_entity.dart';
+import 'package:bhoomi_sakti/features/products/products_providers.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ProductDetailsPage extends StatelessWidget {
-  const ProductDetailsPage({super.key, required this.product});
+// 1. Changed to ConsumerWidget to use ref
+class ProductDetailsPage extends ConsumerWidget {
+  // 2. Changed constructor to accept productId
+  const ProductDetailsPage({super.key, required this.productId});
 
-  final ProductEntity product;
+  final String productId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 3. Watch the new provider using the productId
+    final productAsyncValue = ref.watch(productDetailsProvider(productId));
+
+    // 4. Handle the async states (loading, error, data)
+    return productAsyncValue.when(
+      data: (product) => _buildScaffold(context, ref, product),
+      loading:
+          () =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error:
+          (err, stack) => Scaffold(
+            appBar: AppBar(),
+            body: Center(child: Text('Error: $err')),
+          ),
+    );
+  }
+
+  // 5. Extracted the original Scaffold into its own method
+  Scaffold _buildScaffold(
+    BuildContext context,
+    WidgetRef ref,
+    ProductEntity product,
+  ) {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -355,7 +382,9 @@ class ProductDetailsPage extends StatelessWidget {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: () {},
+                      onPressed: () {
+                        ref.read(addProductToCartUsecaseProvider).call(product);
+                      },
                       icon: Icon(
                         Icons.shopping_cart,
                         color: theme.colorScheme.primary,

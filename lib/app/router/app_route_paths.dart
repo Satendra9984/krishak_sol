@@ -12,7 +12,14 @@ class AppRoutePaths {
   // Main app routes
   static const String home = '/home';
   static const String dashboard = '/dashboard';
+  static const String shop = '/shop';
+  static const String productDetails = 'product/:productId';
+  static const String cart = '/cart';
+  static const String checkout = 'checkout/:agentId';
+  static const String payment = '/payment';
   static const String profile = '/profile';
+  static const String orders = '/orders';
+  static const String orderDetails = 'order/:orderId';
   static const String settings = '/settings';
 
   // Farmer module routes

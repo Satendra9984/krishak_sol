@@ -1,4 +1,5 @@
 import 'package:bhoomi_sakti/app/core/providers/core_providers.dart';
+import 'package:bhoomi_sakti/app/router/app_route_paths.dart';
 import 'package:bhoomi_sakti/common/app_common_providers.dart';
 import 'package:bhoomi_sakti/common/widgets/custom_text_field.dart';
 import 'package:bhoomi_sakti/features/products/domain/entities/category_entity.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
 
 class ShopPage extends ConsumerStatefulWidget {
   const ShopPage({super.key});
@@ -271,13 +273,8 @@ class _ShopPageState extends ConsumerState<ShopPage> {
                         return ProductsCard(
                           product: product,
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        ProductDetailsPage(product: product),
-                              ),
+                            context.push(
+                              '${AppRoutePaths.shop}/product/${product.productId}',
                             );
                           },
                         );

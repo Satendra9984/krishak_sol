@@ -1,107 +1,143 @@
-# 📄 Bhoomi Shakti Application
+# Bhoomi Sakti 🪴 – Soil-Tech Platform
 
-**Submitted by:** Omnistacks Technologies  
-**Prepared for:** Mr. Srinivasa V. Reddy  
-**Date:** 22-05-2025
-
----
-
-## 🔍 Project Overview
-
-**Bhoomi Shakti** is an agriculture-focused digital solution designed to empower farmers with actionable soil insights and streamline agri-service delivery workflows through a seamless and accessible mobile-first approach.
-
-The application consists of three integrated modules — **Farmer**, **Agent**, and **Admin** — focusing on soil testing, crop advisory, product ordering, and stakeholder management.
-
-> Our goal is to digitize the farm-to-lab-to-market process while offering intuitive user experience and real-time insights to boost productivity and sustainability for Indian farmers.
+> Agriculture-focused Flutter application that digitises soil testing, crop advisory and agri-service delivery for **Farmers, Agents & Admins**.
+> Built end-to-end by **[Your Name] – Solo Flutter Engineer**.
 
 ---
 
-## 🧩 Module Breakdown
+## 🚀 Why this project matters
 
-### 📱 1. Farmer Module (Flutter App)
-
-Farmers can:
-
-- Register/login via mobile OTP (JWT-based authentication)
-- Request a soil test by sharing farm details
-- View all their soil reports and detailed crop advisory
-- Access personalized recommendations:
-  - Recommended crops
-  - Fertilizers, pesticides, and seeds
-  - Soil preparation steps
-  - Services offered (can be ordered)
-- Browse products and services
-- Place orders and make payments (UPI / Netbanking / Cards)
+1. **Real-world complexity:** multi-role app with secure login, e-commerce–style shop/cart/checkout, orders & payments, plus agronomy workflows.
+2. **Enterprise-grade architecture:** Clean Architecture, feature-first modules, SOLID principles, CI-ready.
+3. **Production readiness:** flavour-based builds, error handling, token refresh, offline cache, analytics hooks, theming & localisation scaffolds.
 
 ---
 
-### 👨‍🌾 2. Agent Module (Flutter App – Role-based Access)
+## 🧰 Tech Stack & Key Decisions
 
-Agents will:
+| Layer | Technology | Why |
+|-------|------------|-----|
+| UI & Routing | Flutter 3.22, **go_router** | Declarative navigation, deep links, guards |
+| State | **flutter_bloc** (complex flows), **Riverpod** (DI/light state) | Clear separation of concerns, testability |
+| Networking | **dio** + interceptors (Token, Refresh) | Fine-grained HTTP control, retry, logging |
+| Local Storage | **isar** | High-performance NoSQL, offline cache |
+| Secure Storage | **flutter_secure_storage** | Persist JWT & refresh tokens |
+| Functional utils | **fpdart** | `Either<Failure, T>` for errors |
+| CI ready | GitHub Actions (template included) | Automated format → analyse → test → build |
 
-- Login via mobile OTP (JWT-based)
-- Visit farms and perform soil testing
-- Enter soil data parameters directly in the app:
-  - `phLevel`, `electricalConductivity`, `organicCarbon`, `nitrogen`, `phosphorus`,  
-    `potassium`, `sulphur`, `zinc`, `boron`, `iron`, `manganese`, `copper`,  
-    `temperature`, `humidity`, `windSpeed`, `precipitation`
-- Generate crop advisory using our expert-curated agronomy dataset
-- Manage:
-  - Orders
-  - Product inventory (Add/Edit/Delete)
-  - Earnings and payment status
-  - Assigned soil tests and their completion status
+> All packages pinned in `pubspec.yaml` for reproducible builds.
 
 ---
 
-### 🖥️ 3. Admin Module (React Dashboard)
+## 🏛️ Architecture
 
-Admins (email + password authentication) can:
+Clean Architecture with feature slicing:
 
-- Manage all users: Farmers, Agents
-- Manage the Agronomy Table for crop advisory generation
-- Add/Edit/Delete:
-  - Products
-  - Crops
-  - Services
-- Monitor and manage:
-  - All soil tests
-  - Orders
-  - Payments (for agents and service providers)
-  - Reports across the system
+```
+lib/
+  app/                ← App-level config (router, themes, injections)
+  core/               ← Cross-cutting concerns (exceptions, failure, utils)
+  features/
+    auth/
+      data/ • domain/ • presentation/
+    products/
+    cart/
+    checkout/
+    orders/           ← scaffolded (API pending)
+  common/             ← Reusable widgets, extensions, providers
+```
+
+### Data-Flow Diagram
+
+```
+UI (Bloc / Riverpod Consumer)
+  │  events / state
+  ▼
+UseCase   ←–– functional wrapper (Either<Failure,T>)
+  │
+  ▼
+Repository (abstract in domain → impl in data)
+  │
+  ├── RemoteDataSource (Dio)   ↔  API / JSON
+  └── LocalDataSource  (Isar)  ↔  Device DB
+```
+
+### Navigation Graph (excerpt)
+
+```
+/splash → /login → /home (ShellRoute)
+                ├─ /dashboard
+                ├─ /shop
+                │     └─ /shop/product/:productId
+                ├─ /cart
+                └─ /profile
+```
+
+Auth guard redirects unauthenticated users to `/login` and prevents back-navigation to splash.
 
 ---
 
-## 🧪 Soil Test Inputs
+## 🧑‍💻 Running the app
 
-Agents will input the following scientific values:
+```bash
+# Get packages
+flutter pub get
 
-```java
-private Float phLevel;
-private Float electricalConductivity;
-private Float organicCarbon;
-private Float nitrogen;
-private Float phosphorus;
-private Float potassium;
-private Float sulphur;
-private Float zinc;
-private Float boron;
-private Float iron;
-private Float manganese;
-private Float copper;
-private Float temperature;
-private Float humidity;
-private Float windSpeed;
-private Float precipitation;
+# Run Dev flavour
+flutter run --flavor dev -t lib/main_dev.dart
 
+# Run Prod flavour (release)
+flutter run --flavor prod -t lib/main_prod.dart --release
+```
 
+> VS Code users: `.vscode/launch.json` already contains launch configs *Bhoomi Sakti (Dev/Prod/Profile)*.
 
+### Environment variables
 
-Final Advice
-Start with SWE-1-lite for most of your Flutter work—it’s unlimited and tuned for real-world software engineering.
+```
+# .env.dev
+API_BASE_URL=https://dev.api.example.com
+# ...
+```
+Loaded at start-up via `flutter_dotenv` (hooked in `main_*.dart`).
 
-Switch to SWE-1 for more complex or multi-step tasks while it remains free.
+---
 
-Use Gemini 2.5 Pro or Claude 3.7 Sonnet for the toughest coding challenges, especially if you have credits to spare.
+## 📝 Testing & Quality Gates
 
-This approach balances performance, access, and cost for Flutter development on Windsurf as a free user.
+* **Unit tests** for use-cases, repositories, blocs (100% deterministic via mocks).
+* **Widget tests** for critical flows (login, add-to-cart, checkout).  
+* **very_good_analysis** + **dart format** enforced in CI.
+* **GitHub Actions**: on PR – `flutter pub get`, `flutter test --coverage`, `dart analyze`, `flutter build apk --debug`.
+
+Badge templates included – add your own secrets to enable.
+
+---
+
+## 🌟 Highlights & Problem-Solving Stories
+
+1. **Token refresh race-condition:** implemented `RefreshInterceptor` that queues failed 401 requests until a new token arrives, eliminating double refresh calls.
+2. **Offline cart:** Cart items cached in Isar; queued mutations sync when connectivity restores (Connectivity + Stream listen).
+3. **UseCase abstraction:** `UseCase` vs `FutureUseCase` split surfaced a bug (async mis-match) – fixed in `RefreshTokenUsecase`, improving compile-time safety.
+4. **Composable routing:** Nested `StatefulShellRoute` allows independent nav stacks per bottom-tab while preserving global auth redirects.
+5. **Scalable DI:** Riverpod providers (e.g., `cartBlocProvider`) make BLoCs mockable in tests and hot-swappable (e.g., switching to StateNotifier for trivial flows).
+
+---
+
+## 📈 What I’d improve next
+
+* Finish **Orders** module (design skeleton already present) once backend endpoints are finalised.
+* Integrate **Firebase Crashlytics** & **Sentry** for release monitoring.
+* Add **Melos** workspace + code-gen for freezed models to streamline data layer.
+* Implement **e2e tests** with `flutter_driver` / `integration_test`.
+
+---
+
+## 👋 Author
+
+**Satendra Pal**
+
+[LinkedIn](https://www.linkedin.com/in/satendra-pal-943540209/) • [Email](mailto:palsatyendra9984@gmail.com
+)
+
+Feel free to fork, open issues, or reach out if you have questions!

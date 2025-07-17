@@ -128,7 +128,7 @@ class _OtpVerificationPageState extends ConsumerState<OtpVerificationPage> {
                 .read(authNotifierProvider.notifier)
                 .setAuthenticatedUser(state.authSuccessEntity.user);
 
-            context.go(AppRoutePaths.home);
+            context.go(AppRoutePaths.dashboard);
           }
           // VerifyOtpSuccess is handled by AuthNotifier & GoRouter redirect
         },
