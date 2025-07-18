@@ -13,6 +13,24 @@
 
 ---
 
+## 📹 Demo Video
+
+Once you clone the repository you can watch a short walkthrough of the main user flows:
+
+```html
+<!-- GitHub renders the HTML <video> tag, providing in-page playback -->
+<video src="assets/demo1.mp4" controls style="max-width: 100%; height: auto;">
+  Your browser does not support the <code>video</code> tag.
+</video>
+```
+
+```html
+<!-- GitHub renders the HTML <video> tag, providing in-page playback -->
+<video src="assets/demo2.mp4" controls style="max-width: 100%; height: auto;">
+  Your browser does not support the <code>video</code> tag.
+</video>
+```
+
 ## 🧰 Tech Stack & Key Decisions
 
 | Layer | Technology | Why |
@@ -137,7 +155,6 @@ Badge templates included – add your own secrets to enable.
 
 **Satendra Pal**
 
-[LinkedIn](https://www.linkedin.com/in/satendra-pal-943540209/) • [Email](mailto:palsatyendra9984@gmail.com
-)
+[LinkedIn](https://www.linkedin.com/in/satendra-pal-943540209/) • [Email](mailto:palsatyendra9984@gmail.com)
 
 Feel free to fork, open issues, or reach out if you have questions!
